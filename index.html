@@ -1,10 +1,9 @@
-   <!DOCTYPE html>
+  <!DOCTYPE html>
 <html lang="it">
 <head>
     <meta charset="UTF-8">
-    <title>RADAR-FLUX | TERMINAL</title>
+    <title>RADAR-FLUX | TERMINAL v3.0</title>
     <style>
-        /* STILE DARK TERMINAL */
         body { 
             background-color: #06080a; 
             color: #d1d5db; 
@@ -12,9 +11,8 @@
             margin: 0; 
             padding: 20px;
         }
-        .container { max-width: 1400px; margin: 0 auto; }
+        .container { max-width: 1500px; margin: 0 auto; }
         
-        /* HEADER */
         .header { 
             border-bottom: 2px solid #006e50; 
             padding-bottom: 10px; 
@@ -25,9 +23,7 @@
         }
         .logo { font-size: 32px; font-weight: bold; letter-spacing: 2px; color: #fff; }
         .logo span { color: #006e50; }
-        .status { font-size: 12px; color: #008f60; }
 
-        /* GRID SYSTEM */
         .grid { 
             display: grid; 
             grid-template-columns: repeat(12, 1fr); 
@@ -39,22 +35,22 @@
             padding: 10px; 
             border-radius: 4px;
         }
-        .col-8 { grid-column: span 8; }
-        .col-4 { grid-column: span 4; }
         .col-12 { grid-column: span 12; }
+        .col-6 { grid-column: span 6; }
+        .col-3 { grid-column: span 3; }
 
         .label { 
-            font-size: 10px; 
+            font-size: 11px; 
             color: #7a92aa; 
             text-transform: uppercase; 
-            margin-bottom: 10px;
+            margin-bottom: 15px;
+            font-weight: bold;
             border-left: 3px solid #006e50;
             padding-left: 8px;
         }
 
-        /* RESPONSIVE */
-        @media (max-width: 900px) {
-            .col-8, .col-4 { grid-column: span 12; }
+        @media (max-width: 1000px) {
+            .col-6, .col-3 { grid-column: span 12; }
         }
     </style>
 </head>
@@ -64,96 +60,120 @@
     <div class="header">
         <div>
             <div class="logo">RADAR<span>-FLUX</span></div>
-            <div style="font-size: 10px; color: #7a92aa;">GLOBAL CAPITAL FLOW MONITOR v2.0</div>
+            <div style="font-size: 10px; color: #7a92aa;">MULTI-REGION EQUITY RADAR</div>
         </div>
-        <div class="status">● SYSTEM ACTIVE (REAL-TIME)</div>
+        <div style="color: #008f60; font-size: 12px;">● LIVE DATA STREAMING</div>
     </div>
 
     <div class="grid">
-        <div class="card col-12" style="padding:0;">
-            <div class="tradingview-widget-container">
+        
+        <div class="card col-12">
+            <div class="label">WORLD EQUITY SENTIMENT (MSCI World Index)</div>
+            <div class="tradingview-widget-container" style="height: 380px;">
                 <div class="tradingview-widget-container__widget"></div>
-                <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-ticker-tape.js" async>
+                <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-technical-analysis.js" async>
                 {
-                "symbols": [
-                    {"proName": "FOREXCOM:SPX500", "title": "S&P 500"},
-                    {"proName": "FOREXCOM:NSXUSD", "title": "NASDAQ 100"},
-                    {"proName": "FX_IDC:EURUSD", "title": "EUR/USD"},
-                    {"proName": "BITSTAMP:BTCUSD", "title": "BITCOIN"},
-                    {"proName": "TVC:GOLD", "title": "GOLD"},
-                    {"proName": "TVC:US10Y", "title": "US 10Y YIELD"}
-                ],
-                "showSymbolLogo": true, "colorTheme": "dark", "isTransparent": true, "displayMode": "adaptive", "locale": "it"
+                    "interval": "1D",
+                    "width": "100%",
+                    "isTransparent": true,
+                    "height": "100%",
+                    "symbol": "CAPITALCOM:WORLD",
+                    "showIntervalTabs": true,
+                    "locale": "it",
+                    "colorTheme": "dark"
                 }
                 </script>
             </div>
         </div>
 
-        <div class="card col-8">
-            <div class="label">Market Sentiment Analysis (Daily)</div>
-            <div style="height: 450px;">
-                <div class="tradingview-widget-container" style="height:100%;width:100%">
-                    <div id="tradingview_main" style="height:calc(100% - 32px);width:100%"></div>
-                    <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
-                    <script type="text/javascript">
-                    new TradingView.widget({
-                      "autosize": true,
-                      "symbol": "SPY",
-                      "interval": "D",
-                      "timezone": "Etc/UTC",
-                      "theme": "dark",
-                      "style": "1",
-                      "locale": "it",
-                      "toolbar_bg": "#f1f3f6",
-                      "enable_publishing": false,
-                      "hide_top_toolbar": false,
-                      "save_image": false,
-                      "container_id": "tradingview_main"
-                    });
-                    </script>
-                </div>
+        <div class="card col-4">
+            <div class="label">EUROPE: STOXX 600</div>
+            <div class="tradingview-widget-container" style="height: 350px;">
+                <div class="tradingview-widget-container__widget"></div>
+                <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-technical-analysis.js" async>
+                {
+                    "interval": "1D",
+                    "width": "100%",
+                    "isTransparent": true,
+                    "height": "100%",
+                    "symbol": "INDEX:SXXP",
+                    "showIntervalTabs": false,
+                    "locale": "it",
+                    "colorTheme": "dark"
+                }
+                </script>
             </div>
         </div>
 
         <div class="card col-4">
-            <div class="label">Technical Radar (Aggregated)</div>
-            <div class="tradingview-widget-container" style="height: 450px;">
+            <div class="label">EMERGING MARKETS (EEM)</div>
+            <div class="tradingview-widget-container" style="height: 350px;">
                 <div class="tradingview-widget-container__widget"></div>
                 <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-technical-analysis.js" async>
                 {
-                "interval": "1D",
-                "width": "100%",
-                "isTransparent": true,
-                "height": "100%",
-                "symbol": "AMEX:SPY",
-                "showIntervalTabs": true,
-                "locale": "it",
-                "colorTheme": "dark"
+                    "interval": "1D",
+                    "width": "100%",
+                    "isTransparent": true,
+                    "height": "100%",
+                    "symbol": "AMEX:EEM",
+                    "showIntervalTabs": false,
+                    "locale": "it",
+                    "colorTheme": "dark"
+                }
+                </script>
+            </div>
+        </div>
+
+        <div class="card col-4">
+            <div class="label">JAPAN: NIKKEI 225</div>
+            <div class="tradingview-widget-container" style="height: 350px;">
+                <div class="tradingview-widget-container__widget"></div>
+                <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-technical-analysis.js" async>
+                {
+                    "interval": "1D",
+                    "width": "100%",
+                    "isTransparent": true,
+                    "height": "100%",
+                    "symbol": "INDEX:NKY",
+                    "showIntervalTabs": false,
+                    "locale": "it",
+                    "colorTheme": "dark"
                 }
                 </script>
             </div>
         </div>
 
         <div class="card col-12">
-            <div class="label">Macroeconomic Events (Impact High)</div>
-            <div class="tradingview-widget-container">
-                <div class="tradingview-widget-container__widget"></div>
-                <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-events.js" async>
-                {
-                "colorTheme": "dark",
-                "isTransparent": true,
-                "width": "100%",
-                "height": "300",
-                "locale": "it",
-                "importanceFilter": "0,1"
-                }
+            <div class="label">Relative Strength: Regional Overview</div>
+            <div style="height: 400px;">
+                <div id="tradingview_compare" style="height:100%; width:100%;"></div>
+                <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+                <script type="text/javascript">
+                new TradingView.MediumWidget({
+                  "symbols": [
+                    ["Europe STOXX 600", "INDEX:SXXP|12M"],
+                    ["Emerging Markets", "AMEX:EEM|12M"],
+                    ["Nikkei 225", "INDEX:NKY|12M"]
+                  ],
+                  "chartOnly": false,
+                  "width": "100%",
+                  "height": "100%",
+                  "locale": "it",
+                  "colorTheme": "dark",
+                  "gridLineColor": "rgba(42, 46, 57, 0)",
+                  "fontColor": "#787b86",
+                  "isTransparent": true,
+                  "autosize": true,
+                  "container_id": "tradingview_compare"
+                });
                 </script>
             </div>
         </div>
+
     </div>
 
-    <div style="text-align: center; margin-top: 30px; font-size: 10px; color: #4b5563;">
-        DISCLAIMER: For educational purposes only. Data provided by TradingView.
+    <div style="text-align: center; margin: 40px 0; font-size: 10px; color: #4b5563;">
+        RADAR-FLUX | NO CRYPTO VERSION | TERMINAL DATA FEED ACTIVE
     </div>
 </div>
 
