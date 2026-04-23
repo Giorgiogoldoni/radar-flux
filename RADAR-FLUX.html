@@ -1,0 +1,844 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RADAR-FLUX</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.development.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.development.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { background:#f5f7fa; font-family:Georgia,serif; color:#18232e; }
+.mono { font-family:monospace; }
+button { cursor:pointer; font-family:monospace; border-radius:3px; }
+button:disabled { cursor:not-allowed; opacity:0.6; }
+.container { max-width:1320px; margin:0 auto; padding:24px 20px; }
+
+/* HEADER */
+.header { display:flex; justify-content:space-between; align-items:flex-start;
+  border-bottom:2px solid #dde4ed; padding-bottom:16px; margin-bottom:20px; flex-wrap:wrap; gap:12px; }
+.logo { font-weight:700; font-size:42px; letter-spacing:3px; line-height:1; }
+.logo-accent { color:#006e50; }
+.tagline { font-family:monospace; font-size:10px; color:#7a92aa; letter-spacing:3px;
+  text-transform:uppercase; margin-top:4px; }
+.hdr-right { display:flex; flex-direction:column; align-items:flex-end; gap:8px; }
+.hdr-dates { display:flex; flex-direction:column; align-items:flex-end; gap:2px; }
+.date-row { font-family:monospace; font-size:11px; color:#7a92aa; }
+.date-row span { color:#006e50; font-weight:600; }
+.hdr-btns { display:flex; gap:8px; flex-wrap:wrap; }
+.btn { font-size:10px; letter-spacing:2px; text-transform:uppercase; padding:8px 14px; border:none; }
+.btn-export { background:#e8f4f0; color:#006e50; border:1px solid #006e50 !important; }
+.btn-export:disabled { background:#f0f4f8; color:#7a92aa; border-color:#dde4ed !important; }
+.btn-info { background:#fff; color:#006e50; border:1px solid #dde4ed !important; }
+.btn-load { background:#006e50; color:#fff; }
+.btn-load:disabled { background:#7a92aa; }
+
+/* PROGRESS */
+.progress-bar { background:#fff; border:1px solid #dde4ed; padding:12px 16px;
+  margin-bottom:16px; border-radius:3px; }
+.progress-steps { display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+.step { font-family:monospace; font-size:10px; padding:4px 10px; border-radius:2px;
+  letter-spacing:1px; text-transform:uppercase; }
+.step-wait { background:#f0f4f8; color:#7a92aa; }
+.step-active { background:#fef6d4; color:#b87f00; border:1px solid #e8cc60; }
+.step-done { background:#d4f5e8; color:#005c3a; border:1px solid #90ddb8; }
+.step-error { background:#fde0e4; color:#7a0018; border:1px solid #eeaab0; }
+
+/* ERROR */
+.error-box { font-family:monospace; font-size:11px; color:#c42038; padding:10px 14px;
+  border:1px solid #f0a0aa; background:#fff0f2; border-radius:3px; margin-bottom:14px; line-height:1.6; }
+
+/* WORLD SCORE */
+.world-block { background:#fff; border:1px solid #dde4ed; border-left:4px solid #006e50;
+  padding:20px 24px; margin-bottom:16px; display:flex; align-items:center;
+  justify-content:space-between; gap:24px; flex-wrap:wrap;
+  box-shadow:0 1px 4px rgba(0,0,0,0.06); }
+.world-label { font-family:monospace; font-size:10px; letter-spacing:3px; color:#7a92aa;
+  text-transform:uppercase; margin-bottom:5px; }
+.world-score-val { font-weight:700; font-size:60px; line-height:1; color:#18232e; }
+.world-score-sub { font-size:24px; color:#7a92aa; }
+.world-action { font-size:14px; font-weight:600; color:#18232e; margin-top:5px; }
+.bar-wrap { flex:1; min-width:160px; max-width:240px; }
+.bar-track { height:8px; background:#f0f4f8; border-radius:4px; overflow:hidden;
+  margin-top:5px; border:1px solid #dde4ed; }
+.bar-fill { height:100%; border-radius:4px; transition:width 0.8s,background 0.8s; }
+.bar-labels { display:flex; justify-content:space-between; font-family:monospace;
+  font-size:9px; color:#7a92aa; margin-top:3px; }
+.live-wrap { display:flex; align-items:center; gap:6px; font-family:monospace;
+  font-size:10px; color:#7a92aa; }
+.live-dot { width:7px; height:7px; border-radius:50%; background:#008f60; display:inline-block; }
+
+/* BADGE */
+.badge { display:inline-flex; align-items:center; gap:5px; padding:4px 10px;
+  border-radius:3px; font-family:monospace; font-size:10px; font-weight:600;
+  letter-spacing:2px; text-transform:uppercase; }
+.badge-wait { background:#f0f4f8; color:#7a92aa; border:1px solid #dde4ed; }
+.badge-agg  { background:#d4f5e8; color:#005c3a; border:1px solid #90ddb8; }
+.badge-con  { background:#fef6d4; color:#7a5500; border:1px solid #e8cc60; }
+.badge-cau  { background:#feeedd; color:#7a3400; border:1px solid #eebb88; }
+.badge-def  { background:#fde0e4; color:#7a0018; border:1px solid #eeaab0; }
+
+/* GRID */
+.baro-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-bottom:16px; }
+.baro-card { background:#fff; border:1px solid #dde4ed; border-top:3px solid #dde4ed;
+  padding:16px; box-shadow:0 1px 4px rgba(0,0,0,0.05); }
+.baro-card.usa  { border-top-color:#1a60cc; }
+.baro-card.eu   { border-top-color:#b87f00; }
+.baro-card.asia { border-top-color:#c85a00; }
+.baro-title { font-family:monospace; font-size:10px; letter-spacing:2px;
+  text-transform:uppercase; color:#7a92aa; margin-bottom:8px; }
+.baro-score { font-weight:700; font-size:40px; line-height:1; color:#18232e; margin-bottom:5px; }
+.baro-score-sub { font-size:16px; color:#7a92aa; }
+.metric-list { margin-top:10px; }
+.metric-row { display:flex; justify-content:space-between; align-items:center;
+  padding:4px 0; border-bottom:1px solid #f0f4f8; }
+.metric-row:last-child { border-bottom:none; }
+.metric-name { font-family:monospace; font-size:10px; color:#7a92aa; }
+.metric-val  { font-family:monospace; font-size:11px; font-weight:600; }
+.up   { color:#008f60; }
+.down { color:#c42038; }
+.neu  { color:#7a92aa; }
+
+/* MACRO */
+.macro-strip { background:#fff; border:1px solid #dde4ed; padding:14px 18px;
+  box-shadow:0 1px 4px rgba(0,0,0,0.05); margin-bottom:10px; }
+.macro-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; }
+.macro-label { font-family:monospace; font-size:10px; color:#7a92aa; margin-bottom:2px; }
+.macro-val   { font-weight:700; font-size:24px; color:#18232e; line-height:1; }
+.macro-chg   { font-family:monospace; font-size:10px; margin-top:2px; }
+
+/* NOTE */
+.note-box { font-family:monospace; font-size:10px; color:#7a92aa; line-height:1.7;
+  background:#f2fbf7; border:1px solid #b0ddc8; padding:7px 12px; border-radius:3px; }
+
+/* MODAL */
+.modal-overlay { position:fixed; inset:0; background:rgba(10,20,30,0.5);
+  z-index:100; display:flex; align-items:center; justify-content:center; padding:24px; }
+.modal { background:#fff; border:1px solid #dde4ed; max-width:900px; width:100%;
+  max-height:88vh; overflow-y:auto; border-radius:4px; box-shadow:0 8px 32px rgba(0,0,0,0.15); }
+.modal-hdr { display:flex; justify-content:space-between; align-items:center;
+  padding:14px 18px; border-bottom:1px solid #dde4ed; position:sticky; top:0;
+  background:#fff; z-index:1; }
+.modal-title { font-family:monospace; font-size:12px; letter-spacing:2px;
+  text-transform:uppercase; color:#006e50; font-weight:600; }
+.modal-close { background:none; border:1px solid #dde4ed; color:#7a92aa;
+  width:28px; height:28px; font-size:15px; display:flex; align-items:center; justify-content:center; }
+.modal-body { padding:18px; display:flex; flex-direction:column; gap:18px; }
+.sec-title { font-family:monospace; font-size:9px; letter-spacing:3px;
+  text-transform:uppercase; color:#006e50; margin-bottom:7px;
+  padding-bottom:4px; border-bottom:1px solid #dde4ed; }
+.mtable { width:100%; border-collapse:collapse; font-family:monospace; font-size:11px; }
+.mtable th { text-align:left; padding:5px 8px; color:#7a92aa; font-size:9px;
+  letter-spacing:2px; text-transform:uppercase; border-bottom:1px solid #dde4ed; background:#f0f4f8; }
+.mtable td { padding:7px 8px; border-bottom:1px solid #f0f4f8; color:#18232e;
+  vertical-align:top; line-height:1.5; }
+.mtable td:first-child { color:#006e50; font-weight:600; white-space:nowrap; }
+.tag { display:inline-block; padding:1px 6px; font-size:9px; letter-spacing:1px;
+  border-radius:2px; text-transform:uppercase; font-weight:600; }
+.formula-box { background:#f0f4f8; border:1px solid #dde4ed; padding:10px 14px;
+  font-family:monospace; font-size:11px; color:#18232e; border-radius:3px;
+  line-height:2; margin-bottom:10px; }
+
+@media(max-width:900px){
+  .baro-grid { grid-template-columns:1fr; }
+  .macro-grid { grid-template-columns:repeat(2,1fr); }
+}
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<script type="text/babel">
+const { useState, useCallback, useRef } = React;
+
+// ── INDICATORI ─────────────────────────────────────────────────────────────
+function calcKAMA(closes, n=10) {
+  const fast=2/3, slow=2/31; let k=closes[0]; const res=[k];
+  for(let i=1;i<closes.length;i++){
+    if(i<n){res.push(k);continue;}
+    const dir=Math.abs(closes[i]-closes[i-n]);
+    let noise=0; for(let j=1;j<=n;j++) noise+=Math.abs(closes[i-j+1]-closes[i-j]);
+    const er=noise===0?0:dir/noise;
+    k=k+Math.pow(er*(fast-slow)+slow,2)*(closes[i]-k); res.push(k);
+  }
+  return res;
+}
+function calcERseries(closes, n=10) {
+  const res=new Array(closes.length).fill(null);
+  for(let i=n;i<closes.length;i++){
+    const dir=Math.abs(closes[i]-closes[i-n]);
+    let noise=0; for(let j=1;j<=n;j++) noise+=Math.abs(closes[i-j+1]-closes[i-j]);
+    res[i]=noise===0?0:dir/noise;
+  }
+  return res;
+}
+function calcERmean(erSeries, m=20) {
+  const v=erSeries.filter(x=>x!==null);
+  if(!v.length) return 0;
+  const sl=v.slice(-m); return sl.reduce((a,b)=>a+b,0)/sl.length;
+}
+function calcROCofER(erSeries, rp=5) {
+  const v=erSeries.filter(x=>x!==null);
+  if(v.length<rp+1) return 0;
+  const cur=v.at(-1), prev=v.at(-1-rp);
+  return prev===0?0:(cur-prev)/prev;
+}
+function calcAO(highs, lows) {
+  const mid=highs.map((h,i)=>(h+lows[i])/2);
+  if(mid.length<35) return 0;
+  const s5=mid.slice(-5).reduce((a,b)=>a+b,0)/5;
+  const s34=mid.slice(-34).reduce((a,b)=>a+b,0)/34;
+  const p5=mid.slice(-6,-1).reduce((a,b)=>a+b,0)/5;
+  const p34=mid.slice(-35,-1).reduce((a,b)=>a+b,0)/34;
+  const cur=s5-s34, prv=p5-p34;
+  if(cur>0&&cur>prv) return 1; if(cur<0) return -1; return 0;
+}
+function compositeSignal(d) {
+  const kamaArr=calcKAMA(d.closes);
+  const erArr=calcERseries(d.closes);
+  const erMean=calcERmean(erArr,20);
+  const rocER=calcROCofER(erArr,5);
+  const lastKAMA=kamaArr.at(-1);
+  const kamaSig=d.current>lastKAMA?1:-1;
+  const kamaW=kamaSig*erMean;
+  const aoSig=calcAO(d.highs,d.lows);
+  const rocP=rocER<-0.15?-0.5:rocER<-0.05?-0.25:0;
+  return {signal:kamaW+aoSig*0.5+rocP, kama:lastKAMA, erMean, rocER, aoSig, kamaW};
+}
+
+// ── HELPERS ────────────────────────────────────────────────────────────────
+const clamp=v=>Math.round(Math.max(0,Math.min(10,v)));
+const f2=v=>typeof v==="number"?v.toFixed(2):"—";
+const f3=v=>typeof v==="number"?v.toFixed(3):"—";
+const f4=v=>typeof v==="number"?v.toFixed(4):"—";
+const pct=v=>(v>=0?"+":"")+v.toFixed(2)+"%";
+const dir=v=>v>=0?"up":"down";
+
+function badgeClass(s) {
+  if(s===null) return "badge badge-wait";
+  if(s>=8) return "badge badge-agg";
+  if(s>=5) return "badge badge-con";
+  if(s>=3) return "badge badge-cau";
+  return "badge badge-def";
+}
+function badgeText(s) {
+  if(s===null) return "● IN ATTESA";
+  if(s>=8) return "● AGGRESSIVO";
+  if(s>=5) return "● COSTRUTTIVO";
+  if(s>=3) return "● PRUDENTE";
+  return "● DIFENSIVO";
+}
+function barColor(s) {
+  if(s===null) return "#7a92aa";
+  if(s>=8) return "#008f60"; if(s>=5) return "#b87f00";
+  if(s>=3) return "#c85a00"; return "#c42038";
+}
+function worldActionText(s) {
+  if(s===null) return "Premi AGGIORNA DATI per iniziare l'analisi";
+  if(s>=8) return "✔ AUMENTA esposizione azionaria";
+  if(s>=5) return "◎ MANTIENI posizioni attuali";
+  if(s>=3) return "▼ RIDUCI leggermente il rischio";
+  return "✕ RIDUCI FORTE — passa a difesa";
+}
+
+// ── FETCH CON RETRY ────────────────────────────────────────────────────────
+async function fetchBatch(tickers, attempt=1) {
+  const today=new Date().toLocaleDateString("it-IT");
+  const prompt=`Sei un assistente finanziario. Restituisci SOLO JSON valido, zero markdown, zero testo aggiuntivo.
+Per questi ticker recupera via web search i dati storici giornalieri degli ultimi 90 giorni di borsa (escludi weekend e festivi).
+Ticker: ${tickers.join(", ")}
+Formato (90 valori per array):
+{"TICKER":{"dates":["YYYY-MM-DD",...],"closes":[num,...],"highs":[num,...],"lows":[num,...]},...}
+Data oggi: ${today}. Tentativo ${attempt}/3. SOLO JSON.`;
+
+  const resp = await fetch("https://api.anthropic.com/v1/messages",{
+    method:"POST", headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({
+      model:"claude-sonnet-4-20250514", max_tokens:8000,
+      tools:[{type:"web_search_20250305",name:"web_search"}],
+      messages:[{role:"user",content:prompt}],
+    }),
+  });
+  if(!resp.ok) throw new Error(`HTTP ${resp.status}`);
+  const data=await resp.json();
+  const text=data.content.filter(b=>b.type==="text").map(b=>b.text).join("");
+  const clean=text.replace(/```json|```/g,"").trim();
+  const s=clean.indexOf("{"), e=clean.lastIndexOf("}");
+  if(s===-1||e===-1) throw new Error("Nessun JSON nella risposta");
+  const parsed=JSON.parse(clean.slice(s,e+1));
+
+  const result={};
+  for(const[t,d]of Object.entries(parsed)){
+    if(!d.closes||!d.highs||!d.lows) continue;
+    const closes=d.closes.map(Number);
+    const highs=d.highs.map(Number);
+    const lows=d.lows.map(Number);
+    const dates=d.dates||closes.map((_,i)=>`day_${i+1}`);
+    if(closes.length<35) continue; // dati insufficienti per indicatori
+    const current=closes.at(-1), prev=closes.at(-2);
+    result[t]={closes,highs,lows,dates,current,prev,
+      pctChg:((current-prev)/prev)*100,
+      lastDate:dates.at(-1)};
+  }
+  return result;
+}
+
+// Fetch con 3 tentativi sequenziali, merge dei risultati parziali
+async function fetchWithRetry(tickers, onProgress) {
+  let merged={};
+  let remaining=[...tickers];
+
+  for(let attempt=1; attempt<=3; attempt++){
+    if(remaining.length===0) break;
+    onProgress(attempt, remaining, "active");
+    try {
+      const result=await fetchBatch(remaining, attempt);
+      merged={...merged,...result};
+      // Calcola quali ticker mancano ancora
+      remaining=remaining.filter(t=>!merged[t]);
+      onProgress(attempt, remaining, "done");
+      if(remaining.length===0) break;
+      if(attempt<3){
+        onProgress(attempt+1, remaining, "waiting");
+        await new Promise(r=>setTimeout(r, attempt===1?3000:5000));
+      }
+    } catch(e) {
+      onProgress(attempt, remaining, "error");
+      if(attempt<3){
+        await new Promise(r=>setTimeout(r, attempt===1?3000:5000));
+      }
+    }
+  }
+  return merged;
+}
+
+// ── EXCEL EXPORT ──────────────────────────────────────────────────────────
+function exportExcel(allData, downloadDate) {
+  const wb=XLSX.utils.book_new();
+
+  // Foglio 1: Serie storiche
+  const rows=[
+    ["RADAR-FLUX — Serie Storiche & Indicatori Calcolati"],
+    [`Scarico dati: ${downloadDate}`],
+    [`Export Excel: ${new Date().toLocaleString("it-IT")}`],
+    [],
+    ["TICKER","DATA","CLOSE","HIGH","LOW","KAMA","ER","ER MEAN(20)","ROC-ER(5)","AO SIGNAL","KAMA SIG","SEGNALE COMP"],
+  ];
+
+  for(const [ticker,d] of Object.entries(allData)){
+    const kamaArr=calcKAMA(d.closes);
+    const erArr=calcERseries(d.closes);
+    for(let i=0;i<d.closes.length;i++){
+      const valid=erArr.slice(0,i+1).filter(v=>v!==null);
+      const erM=valid.length?valid.slice(-20).reduce((a,b)=>a+b,0)/Math.min(valid.length,20):null;
+      const rocL=valid.length>=6?(valid.at(-1)-valid.at(-6))/(Math.abs(valid.at(-6))||1):null;
+      const aoL=i>=34?calcAO(d.highs.slice(0,i+1),d.lows.slice(0,i+1)):null;
+      const ks=kamaArr[i]!=null?(d.closes[i]>kamaArr[i]?1:-1):null;
+      const rp=rocL!=null?(rocL<-0.15?-0.5:rocL<-0.05?-0.25:0):0;
+      const comp=ks!=null?+((ks*(erM||0))+(aoL||0)*0.5+rp).toFixed(4):null;
+      rows.push([
+        ticker, d.dates[i]||`d${i+1}`,
+        d.closes[i]?+d.closes[i].toFixed(4):null,
+        d.highs[i]?+d.highs[i].toFixed(4):null,
+        d.lows[i]?+d.lows[i].toFixed(4):null,
+        kamaArr[i]?+kamaArr[i].toFixed(4):null,
+        erArr[i]!=null?+erArr[i].toFixed(4):null,
+        erM!=null?+erM.toFixed(4):null,
+        rocL!=null?+rocL.toFixed(4):null,
+        aoL, ks, comp
+      ]);
+    }
+    rows.push([]);
+  }
+  const ws=XLSX.utils.aoa_to_sheet(rows);
+  ws["!cols"]=[{wch:12},{wch:12},{wch:10},{wch:10},{wch:10},{wch:10},{wch:10},{wch:14},{wch:12},{wch:10},{wch:10},{wch:14}];
+  XLSX.utils.book_append_sheet(wb,ws,"Serie Storiche");
+
+  // Foglio 2: Segnali finali
+  const sig=[
+    ["RADAR-FLUX — Segnali Finali"],
+    [`Scarico dati: ${downloadDate}`],
+    [],
+    ["TICKER","ULTIMO CLOSE","DATA","VAR%","KAMA","ER MEAN","ROC-ER","AO","KAMA×ER","SEGNALE COMP","STATO"],
+  ];
+  for(const [ticker,d] of Object.entries(allData)){
+    const cs=compositeSignal(d);
+    sig.push([ticker,+f2(d.current),d.lastDate||"",+d.pctChg.toFixed(2),
+      +f2(cs.kama),+f3(cs.erMean),+f3(cs.rocER),cs.aoSig,+f3(cs.kamaW),
+      +cs.signal.toFixed(4),
+      cs.signal>0.5?"RIALZISTA":cs.signal<-0.5?"RIBASSISTA":"NEUTRO"]);
+  }
+  const ws2=XLSX.utils.aoa_to_sheet(sig);
+  ws2["!cols"]=[{wch:12},{wch:12},{wch:12},{wch:8},{wch:10},{wch:10},{wch:10},{wch:6},{wch:10},{wch:12},{wch:12}];
+  XLSX.utils.book_append_sheet(wb,ws2,"Segnali");
+
+  XLSX.writeFile(wb,`RADAR-FLUX_${new Date().toISOString().slice(0,10)}.xlsx`);
+}
+
+// ── MAIN APP ──────────────────────────────────────────────────────────────
+function App() {
+  const [loading, setLoading]=useState(false);
+  const [error, setError]=useState(null);
+  const [showModal, setShowModal]=useState(false);
+  const [allData, setAllData]=useState(null);
+  const [downloadDate, setDownloadDate]=useState(null);
+  const [lastUpdate, setLastUpdate]=useState(null);
+  const [live, setLive]=useState(false);
+  const [steps, setSteps]=useState([
+    {id:1,label:"Batch 1 — USA",status:"wait"},
+    {id:2,label:"Batch 2 — Europa",status:"wait"},
+    {id:3,label:"Batch 3 — Asia + Macro",status:"wait"},
+  ]);
+
+  const [world, setWorld]=useState(null);
+  const [scores, setScores]=useState({usa:null,eu:null,asia:null});
+  const [metrics, setMetrics]=useState({usa:[],eu:[],asia:[]});
+  const [macro, setMacro]=useState({
+    vix:{val:"—",chg:"—",dir:"neu"},
+    dxy:{val:"—",chg:"—",dir:"neu"},
+    us10y:{val:"—",chg:"—",dir:"neu"},
+  });
+
+  const USA_T=["SPY","QQQ","TLT","HYG","GLD","XLK","XLE","XLF","XLP","SMH","ITA","XLI"];
+  const EU_T=["EXSA.DE","EXH2.DE","EUN2.DE","EURUSD=X"];
+  const ASIA_T=["EXX7.DE","ICGA.DE","APX.PA","JPY=X"];
+  const MACRO_T=["^VIX","DX-Y.NYB","^TNX"];
+
+  function setStep(id,status){
+    setSteps(prev=>prev.map(s=>s.id===id?{...s,status}:s));
+  }
+
+  async function loadAll() {
+    setLoading(true); setError(null); setLive(false);
+    setSteps([
+      {id:1,label:"Batch 1 — USA (12 ticker)",status:"wait"},
+      {id:2,label:"Batch 2 — Europa (4 ticker)",status:"wait"},
+      {id:3,label:"Batch 3 — Asia + Macro (7 ticker)",status:"wait"},
+    ]);
+
+    const now=new Date().toLocaleString("it-IT");
+    setDownloadDate(now);
+
+    try {
+      // ── BATCH 1: USA ──
+      setStep(1,"active");
+      let b1={};
+      for(let att=1;att<=3;att++){
+        try {
+          b1=await fetchBatch(USA_T, att);
+          const missing=USA_T.filter(t=>!b1[t]);
+          if(missing.length===0) break;
+          if(att<3) await new Promise(r=>setTimeout(r,att===1?3000:5000));
+        } catch(e){
+          if(att===3) throw new Error(`Batch USA fallito: ${e.message}`);
+          await new Promise(r=>setTimeout(r,att===1?3000:5000));
+        }
+      }
+      setStep(1,"done");
+
+      const cs=t=>b1[t]?compositeSignal(b1[t]):{signal:0,kama:0,erMean:0,rocER:0,aoSig:0,kamaW:0};
+      const spy=b1["SPY"]||{}, qqq=b1["QQQ"]||{}, tlt=b1["TLT"]||{};
+      const hyg=b1["HYG"]||{}, gld=b1["GLD"]||{}, xlk=b1["XLK"]||{};
+      const xle=b1["XLE"]||{}, xlf=b1["XLF"]||{}, xlp=b1["XLP"]||{};
+      const smh=b1["SMH"]||{}, ita=b1["ITA"]||{}, xli=b1["XLI"]||{};
+
+      const flow=(spy.current>tlt.current?1:-1)+(qqq.pctChg>spy.pctChg?1:-1)+(xle.pctChg>xlk.pctChg?1:-1);
+      const usaRaw=((cs(spy).signal+cs(qqq).signal)/2*3+
+        (cs(tlt).signal+cs(hyg).signal+cs(gld).signal)/3*2.5+
+        (cs(xlk).signal+cs(xle).signal+cs(xlf).signal-cs(xlp).signal)/4*1.5+
+        (cs(smh).signal+cs(ita).signal+cs(xli).signal)/3*1+flow*1.5)/9.5;
+      const usaS=clamp(5+usaRaw*5);
+      const spyCS=cs(spy);
+
+      setScores(prev=>({...prev,usa:usaS}));
+      setMetrics(prev=>({...prev,usa:[
+        {n:"SPY",v:`$${f2(spy.current)} (${pct(spy.pctChg||0)})`,d:dir(spy.pctChg||0)},
+        {n:"QQQ",v:`$${f2(qqq.current)} (${pct(qqq.pctChg||0)})`,d:dir(qqq.pctChg||0)},
+        {n:"TLT",v:`$${f2(tlt.current)} (${pct(tlt.pctChg||0)})`,d:dir(tlt.pctChg||0)},
+        {n:"HYG",v:`$${f2(hyg.current)} (${pct(hyg.pctChg||0)})`,d:dir(hyg.pctChg||0)},
+        {n:"GLD",v:`$${f2(gld.current)} (${pct(gld.pctChg||0)})`,d:dir(gld.pctChg||0)},
+        {n:"SMH",v:`$${f2(smh.current)} (${pct(smh.pctChg||0)})`,d:dir(smh.pctChg||0)},
+        {n:"ER medio SPY",v:f3(spyCS.erMean),d:spyCS.erMean>0.5?"up":"neu"},
+        {n:"ROC-ER SPY",v:f3(spyCS.rocER),d:spyCS.rocER>0?"up":"down"},
+        {n:"FLOW ENGINE",v:flow>0?"RISK ON":flow<0?"RISK OFF":"NEUTRALE",d:flow>0?"up":flow<0?"down":"neu"},
+      ]}));
+
+      // ── BATCH 2: EUROPA ──
+      setStep(2,"active");
+      await new Promise(r=>setTimeout(r,2000));
+      let b2={};
+      for(let att=1;att<=3;att++){
+        try {
+          b2=await fetchBatch(EU_T, att);
+          const missing=EU_T.filter(t=>!b2[t]);
+          if(missing.length===0) break;
+          if(att<3) await new Promise(r=>setTimeout(r,att===1?3000:5000));
+        } catch(e){
+          if(att===3) throw new Error(`Batch Europa fallito: ${e.message}`);
+          await new Promise(r=>setTimeout(r,att===1?3000:5000));
+        }
+      }
+      setStep(2,"done");
+
+      const exsa=b2["EXSA.DE"]||{}, exh2=b2["EXH2.DE"]||{};
+      const eun2=b2["EUN2.DE"]||{}, eurusd=b2["EURUSD=X"]||{};
+      const euRaw=((cs(exsa).signal+cs(exh2).signal)/2*3+cs(eun2).signal*2+cs(eurusd).signal*1.5)/6.5;
+      const euS=clamp(5+euRaw*5);
+      const exsaCS=cs(exsa);
+
+      setScores(prev=>({...prev,eu:euS}));
+      setMetrics(prev=>({...prev,eu:[
+        {n:"EXSA.DE",v:`€${f2(exsa.current)} (${pct(exsa.pctChg||0)})`,d:dir(exsa.pctChg||0)},
+        {n:"EXH2.DE",v:`€${f2(exh2.current)} (${pct(exh2.pctChg||0)})`,d:dir(exh2.pctChg||0)},
+        {n:"EUN2.DE",v:`€${f2(eun2.current)} (${pct(eun2.pctChg||0)})`,d:dir(eun2.pctChg||0)},
+        {n:"EUR/USD",v:f4(eurusd.current),d:dir(eurusd.pctChg||0)},
+        {n:"ER medio EXSA",v:f3(exsaCS.erMean),d:exsaCS.erMean>0.5?"up":"neu"},
+        {n:"ROC-ER EXSA",v:f3(exsaCS.rocER),d:exsaCS.rocER>0?"up":"down"},
+        {n:"Spread BTP/Bund",v:"ECB API",d:"neu"},
+        {n:"Euribor 3M",v:"ECB API",d:"neu"},
+      ]}));
+
+      // ── BATCH 3: ASIA + MACRO ──
+      setStep(3,"active");
+      await new Promise(r=>setTimeout(r,2000));
+      let b3={};
+      for(let att=1;att<=3;att++){
+        try {
+          b3=await fetchBatch([...ASIA_T,...MACRO_T], att);
+          const missing=[...ASIA_T,...MACRO_T].filter(t=>!b3[t]);
+          if(missing.length===0) break;
+          if(att<3) await new Promise(r=>setTimeout(r,att===1?3000:5000));
+        } catch(e){
+          if(att===3) throw new Error(`Batch Asia fallito: ${e.message}`);
+          await new Promise(r=>setTimeout(r,att===1?3000:5000));
+        }
+      }
+      setStep(3,"done");
+
+      const exx7=b3["EXX7.DE"]||{}, icga=b3["ICGA.DE"]||{};
+      const apx=b3["APX.PA"]||{}, jpyx=b3["JPY=X"]||{};
+      const vix=b3["^VIX"]||{}, dxy=b3["DX-Y.NYB"]||{}, us10y=b3["^TNX"]||{};
+
+      const jpyR=(jpyx.pctChg||0)<-0.5?1:(jpyx.pctChg||0)>0.5?-1:0;
+      const asiaRaw=(cs(exx7).signal*2.5+cs(icga).signal*2.5+cs(apx).signal*2+jpyR)/8;
+      const asiaS=clamp(5+asiaRaw*5);
+      const exx7CS=cs(exx7);
+
+      setScores(prev=>({...prev,asia:asiaS}));
+      setMetrics(prev=>({...prev,asia:[
+        {n:"EXX7.DE (Nikkei)",v:`€${f2(exx7.current)} (${pct(exx7.pctChg||0)})`,d:dir(exx7.pctChg||0)},
+        {n:"ICGA.DE (China)",v:`€${f2(icga.current)} (${pct(icga.pctChg||0)})`,d:dir(icga.pctChg||0)},
+        {n:"APX.PA (Asia ex-JP)",v:`€${f2(apx.current)} (${pct(apx.pctChg||0)})`,d:dir(apx.pctChg||0)},
+        {n:"USD/JPY",v:f2(jpyx.current),d:dir(jpyx.pctChg||0)},
+        {n:"ER medio EXX7",v:f3(exx7CS.erMean),d:exx7CS.erMean>0.5?"up":"neu"},
+        {n:"ROC-ER EXX7",v:f3(exx7CS.rocER),d:exx7CS.rocER>0?"up":"down"},
+      ]}));
+
+      setMacro({
+        vix:{val:f2(vix.current),chg:pct(vix.pctChg||0),dir:(vix.current||0)>25?"down":"up"},
+        dxy:{val:f2(dxy.current),chg:pct(dxy.pctChg||0),dir:dir(dxy.pctChg||0)},
+        us10y:{val:f2(us10y.current)+"%",chg:pct(us10y.pctChg||0),dir:"neu"},
+      });
+
+      // ── WORLD SCORE ──
+      const vixP=(vix.current||0)>25?-1:0;
+      const dxyP=(dxy.pctChg||0)>0.5?-0.5:0;
+      const worldS=clamp((usaS+euS+asiaS)/3+vixP+dxyP);
+      setWorld(worldS);
+
+      const combined={...b1,...b2,...b3};
+      setAllData(combined);
+      setLastUpdate(new Date().toLocaleString("it-IT"));
+      setLive(true);
+
+    } catch(e) {
+      setError(`Errore: ${e.message}`);
+    }
+    setLoading(false);
+  }
+
+  function handleExport() {
+    if(!allData){alert("Carica prima i dati.");return;}
+    try{ exportExcel(allData, downloadDate||"—"); }
+    catch(e){alert(`Errore export: ${e.message}`);}
+  }
+
+  const stepStatusClass={wait:"step step-wait",active:"step step-active",
+    done:"step step-done",error:"step step-error"};
+
+  return (
+    <div className="container">
+
+      {/* HEADER */}
+      <div className="header">
+        <div>
+          <div className="logo">RADAR<span className="logo-accent">-FLUX</span></div>
+          <div className="tagline">Global Market Direction &amp; Capital Flow Monitor</div>
+        </div>
+        <div className="hdr-right">
+          <div className="hdr-dates">
+            <div className="date-row">
+              Scarico dati: <span>{downloadDate||"—"}</span>
+            </div>
+            <div className="date-row">
+              Ultimo aggiornamento: <span>{lastUpdate||"—"}</span>
+            </div>
+          </div>
+          <div className="hdr-btns">
+            <button className="btn btn-export" onClick={handleExport} disabled={!allData}>
+              ⬇ EXPORT EXCEL
+            </button>
+            <button className="btn btn-info" onClick={()=>setShowModal(true)}>
+              ℹ METRICHE &amp; STRUMENTI
+            </button>
+            <button className="btn btn-load" onClick={loadAll} disabled={loading}>
+              {loading?"⟳ CARICAMENTO...":"↻ AGGIORNA DATI"}
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* PROGRESS STEPS */}
+      {(loading||live) && (
+        <div className="progress-bar">
+          <div className="progress-steps">
+            {steps.map(s=>(
+              <span key={s.id} className={stepStatusClass[s.status]||"step step-wait"}>
+                {s.status==="done"?"✓ ":s.status==="active"?"⟳ ":s.status==="error"?"✕ ":"○ "}
+                {s.label}
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* ERROR */}
+      {error&&<div className="error-box">⚠ {error}</div>}
+
+      {/* WORLD SCORE */}
+      <div className="world-block">
+        <div>
+          <div className="world-label">RADAR-FLUX · WORLD SCORE</div>
+          <div className="world-score-val">
+            {world!==null?world:"—"}<span className="world-score-sub">/10</span>
+          </div>
+        </div>
+        <div>
+          <span className={badgeClass(world)}>{badgeText(world)}</span>
+          <div className="world-action">{worldActionText(world)}</div>
+        </div>
+        <div className="bar-wrap">
+          <div className="world-label">LIVELLO DI RISCHIO</div>
+          <div className="bar-track">
+            <div className="bar-fill" style={{
+              width:`${world!==null?world*10:0}%`,
+              background:barColor(world)
+            }}/>
+          </div>
+          <div className="bar-labels">
+            <span>DIFENSIVO</span><span>NEUTRALE</span><span>AGGRESSIVO</span>
+          </div>
+        </div>
+        <div className="live-wrap">
+          <span className="live-dot" style={{opacity:live?1:0.2}}/>
+          <span>{live?"LIVE":loading?"CARICAMENTO...":"OFFLINE"}</span>
+        </div>
+      </div>
+
+      {/* 3 BAROMETRI */}
+      <div className="baro-grid">
+        {[
+          {cls:"usa",title:"🇺🇸 RADAR-FLUX USA",score:scores.usa,met:metrics.usa},
+          {cls:"eu",title:"🇪🇺 RADAR-FLUX EUROPA",score:scores.eu,met:metrics.eu},
+          {cls:"asia",title:"🌏 RADAR-FLUX ASIA",score:scores.asia,met:metrics.asia},
+        ].map(({cls,title,score,met})=>(
+          <div key={cls} className={`baro-card ${cls}`}>
+            <div className="baro-title">{title}</div>
+            <div className="baro-score">
+              {score!==null?score:"—"}<span className="baro-score-sub">/10</span>
+            </div>
+            <span className={badgeClass(score)} style={{fontSize:9}}>{badgeText(score)}</span>
+            <div className="metric-list">
+              {(met.length>0?met:Array(4).fill(null)).map((m,i)=>(
+                <div key={i} className="metric-row">
+                  <span className="metric-name">{m?m.n:"—"}</span>
+                  <span className={`metric-val ${m?m.d:"neu"}`}>{m?m.v:"—"}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* MACRO */}
+      <div className="macro-strip">
+        <div className="world-label" style={{marginBottom:10}}>🌐 MACRO GLOBALE</div>
+        <div className="macro-grid">
+          {[
+            {lb:"VIX — VOLATILITÀ",d:macro.vix},
+            {lb:"DXY — DOLLARO USA",d:macro.dxy},
+            {lb:"US10Y — RENDIMENTO",d:macro.us10y},
+          ].map(({lb,d})=>(
+            <div key={lb}>
+              <div className="macro-label">{lb}</div>
+              <div className="macro-val">{d.val}</div>
+              <div className={`macro-chg ${d.dir}`}>{d.chg}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* NOTE */}
+      <div className="note-box" style={{marginTop:10}}>
+        ⚙ Motore: <strong>KAMA × ER medio</strong> + <strong>ROC-ER</strong> + <strong>AO × 0.5</strong> + <strong>Flow Engine × 1.5</strong>
+        · Serie: 90 giorni · 3 tentativi automatici per batch · Export Excel dopo caricamento
+      </div>
+
+      {/* MODAL */}
+      {showModal&&(
+        <div className="modal-overlay" onClick={e=>{if(e.target.className==="modal-overlay")setShowModal(false);}}>
+          <div className="modal">
+            <div className="modal-hdr">
+              <div className="modal-title">STRUMENTI, METRICHE &amp; LOGICA DI SCORING</div>
+              <button className="modal-close" onClick={()=>setShowModal(false)}>✕</button>
+            </div>
+            <div className="modal-body">
+
+              <div>
+                <div className="sec-title">🇺🇸 Barometro USA — 12 strumenti</div>
+                <table className="mtable">
+                  <thead><tr><th>TICKER</th><th>NOME</th><th>RUOLO</th><th>FONTE</th></tr></thead>
+                  <tbody>
+                    {[["SPY","SPDR S&P 500 ETF","Core market — direzione principale","Yahoo"],
+                      ["QQQ","Invesco Nasdaq 100","Core market — growth/tech","Yahoo"],
+                      ["TLT","iShares 20Y Treasury Bond","Risk OFF — fuga verso sicurezza","Yahoo"],
+                      ["HYG","iShares High Yield Corp Bond","Appetite per il rischio creditizio","Yahoo"],
+                      ["GLD","SPDR Gold Shares ETF","Safe haven — stress sistemico","Yahoo"],
+                      ["XLK","Technology Select Sector SPDR","Rotazione settoriale — risk ON","Yahoo"],
+                      ["XLE","Energy Select Sector SPDR","Rotazione settoriale — ciclo espansivo","Yahoo"],
+                      ["XLF","Financial Select Sector SPDR","Rotazione settoriale — salute sistema","Yahoo"],
+                      ["XLP","Consumer Staples SPDR","Rotazione difensiva — risk OFF","Yahoo"],
+                      ["SMH","VanEck Semiconductor ETF","Tematico — leva su risk ON","Yahoo"],
+                      ["ITA","iShares U.S. Aerospace & Defense","Tematico — geopolitica","Yahoo"],
+                      ["XLI","Industrial Select Sector SPDR","Tematico — ciclo economico","Yahoo"],
+                    ].map(([t,n,r,f])=>(
+                      <tr key={t}><td>{t}</td><td>{n}</td><td>{r}</td>
+                        <td><span className="tag" style={{background:"#ddeeff",color:"#1a60cc"}}>{f}</span></td></tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+
+              <div>
+                <div className="sec-title">🇪🇺 Barometro Europa — 6 strumenti</div>
+                <table className="mtable">
+                  <thead><tr><th>TICKER</th><th>NOME</th><th>RUOLO</th><th>FONTE</th></tr></thead>
+                  <tbody>
+                    {[["EXSA.DE","iShares STOXX Europe 600 UCITS","Core Europa — AUM ~10 mld €","Xetra"],
+                      ["EXH2.DE","iShares STOXX Europe 600 Financial","Stress sistema bancario europeo","Xetra"],
+                      ["EUN2.DE","iShares Core € Corp Bond UCITS","Flussi risk OFF europei","Xetra"],
+                      ["EURUSD=X","EUR/USD","Forza valutaria europea","Yahoo"],
+                      ["BTP/Bund","Spread Italia-Germania 10Y","Rischio sistemico — soglia 200bp","ECB API"],
+                      ["Euribor 3M","Euro Interbank Offered Rate 3M","Liquidità sistema bancario EU","ECB API"],
+                    ].map(([t,n,r,f])=>(
+                      <tr key={t}><td>{t}</td><td>{n}</td><td>{r}</td>
+                        <td><span className="tag" style={{
+                          background:f==="Xetra"?"#fef6d4":f==="ECB API"?"#d4f5e8":"#ddeeff",
+                          color:f==="Xetra"?"#b87f00":f==="ECB API"?"#008f60":"#1a60cc"
+                        }}>{f}</span></td></tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+
+              <div>
+                <div className="sec-title">🌏 Barometro Asia — 4 strumenti</div>
+                <table className="mtable">
+                  <thead><tr><th>TICKER</th><th>NOME</th><th>RUOLO</th><th>FONTE</th></tr></thead>
+                  <tbody>
+                    {[["EXX7.DE","iShares Nikkei 225 UCITS ETF","Giappone — AUM ~31 mld €","Xetra"],
+                      ["ICGA.DE","iShares MSCI China UCITS ETF","Cina broad — AUM ~4.6 mld €","Xetra"],
+                      ["APX.PA","Amundi MSCI AC Asia ex Japan","Asia ex-JP — India, Korea, Taiwan","Euronext"],
+                      ["JPY=X","USD/JPY","Proxy risk appetite — yen forte = risk OFF","Yahoo"],
+                    ].map(([t,n,r,f])=>(
+                      <tr key={t}><td>{t}</td><td>{n}</td><td>{r}</td>
+                        <td><span className="tag" style={{background:"#feeedd",color:"#c85a00"}}>{f}</span></td></tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+
+              <div>
+                <div className="sec-title">⚙ Indicatori Tecnici — Motore di Calcolo</div>
+                <div className="formula-box">
+                  <strong>Segnale composito</strong> = (KAMA_sig × ER_medio) + (AO × 0.5) + ROC-ER_penalty<br/>
+                  <strong>Score regionale</strong> = 5 + (media_pesata_segnali × 5) — range 0–10<br/>
+                  <strong>World Score</strong> = media(USA, EU, Asia) + penalità_VIX + penalità_DXY
+                </div>
+                <table className="mtable">
+                  <thead><tr><th>INDICATORE</th><th>FORMULA</th><th>PESO / RUOLO</th></tr></thead>
+                  <tbody>
+                    {[["KAMA","Kaufman Adaptive MA n=10","Segnale +1/−1. Moltiplicato per ER medio → qualità del trend"],
+                      ["ER medio","Media Efficiency Ratio su 20 periodi","Moltiplicatore 0–1. ER basso = trend fragile → segnale dimezzato"],
+                      ["ROC-ER","(ER_cur − ER_5giorni_fa) / ER_5giorni_fa","Penalità: <−0.15 → −0.5pt; <−0.05 → −0.25pt"],
+                      ["AO","SMA5 − SMA34 su midpoint (H+L)/2","× 0.5. Positivo crescente +1, negativo −1"],
+                      ["Flow Engine","SPY>TLT + QQQ>SPY + XLE>XLK","× 1.5. Output −3..+3"],
+                      ["VIX",">25 = stress di mercato","Penalità −1 su World Score"],
+                      ["DXY","Rialzo >0.5%","Penalità −0.5 su World Score"],
+                    ].map(([i,f,p])=>(
+                      <tr key={i}><td>{i}</td><td>{f}</td><td>{p}</td></tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+
+              <div>
+                <div className="sec-title">🔢 Soglie di Scoring</div>
+                <table className="mtable">
+                  <thead><tr><th>SCORE</th><th>STATO</th><th>AZIONE OPERATIVA</th></tr></thead>
+                  <tbody>
+                    {[["8–10","AGGRESSIVO","#d4f5e8","#005c3a","Aumenta esposizione azionaria"],
+                      ["5–7","COSTRUTTIVO","#fef6d4","#7a5500","Mantieni posizioni attuali"],
+                      ["3–4","PRUDENTE","#feeedd","#7a3400","Riduci leggermente il rischio"],
+                      ["0–2","DIFENSIVO","#fde0e4","#7a0018","Riduci forte — passa a difesa"],
+                    ].map(([sc,st,bg,col,az])=>(
+                      <tr key={sc}><td>{sc}</td>
+                        <td><span className="tag" style={{background:bg,color:col}}>{st}</span></td>
+                        <td>{az}</td></tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+
+              <div>
+                <div className="sec-title">⬇ Export Excel — Struttura</div>
+                <table className="mtable">
+                  <thead><tr><th>FOGLIO</th><th>CONTENUTO</th></tr></thead>
+                  <tbody>
+                    <tr><td>Serie Storiche</td><td>Per ogni ticker: DATA · CLOSE · HIGH · LOW · KAMA · ER · ER MEAN(20) · ROC-ER(5) · AO · KAMA SIG · SEGNALE COMPOSITO — 90 righe per ticker</td></tr>
+                    <tr><td>Segnali</td><td>Riepilogo: CLOSE · DATA · VAR% · KAMA · ER MEAN · ROC-ER · AO · KAMA×ER · SEGNALE COMPOSITO · STATO (RIALZISTA/RIBASSISTA/NEUTRO)</td></tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <div className="note-box">
+                ⚠ LIMITI — I barometri Europa e Asia misurano direzione e momentum azionario regionale, non flussi reali di capitale europeo/asiatico.
+                ECB API (spread BTP/Bund, Euribor) può avere ritardi di 1-2 giorni lavorativi.
+                Sistema ottimizzato per timeframe settimanale. Serie storica: 90 giorni.
+              </div>
+
+            </div>
+          </div>
+        </div>
+      )}
+
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
+</script>
+</body>
+</html>
