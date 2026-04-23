@@ -2,55 +2,74 @@
 <html lang="it">
 <head>
     <meta charset="UTF-8">
-    <title>RADAR-FLUX | TERMINAL v4.0</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RADAR-FLUX | TERMINAL v5.0</title>
     <style>
+        :root {
+            --bg-color: #06080a;
+            --card-bg: #0d1117;
+            --border-color: #21262d;
+            --accent-color: #006e50;
+            --text-main: #d1d5db;
+            --text-dim: #7a92aa;
+        }
+
         body { 
-            background-color: #06080a; 
-            color: #d1d5db; 
+            background-color: var(--bg-color); 
+            color: var(--text-main); 
             font-family: 'Courier New', Courier, monospace; 
             margin: 0; 
-            padding: 20px;
+            padding: 15px;
         }
-        .container { max-width: 1400px; margin: 0 auto; }
+
+        .container { max-width: 1600px; margin: 0 auto; }
         
+        /* HEADER */
         .header { 
-            border-bottom: 2px solid #006e50; 
-            padding-bottom: 10px; 
+            border-bottom: 2px solid var(--accent-color); 
+            padding-bottom: 15px; 
             margin-bottom: 20px;
             display: flex;
             justify-content: space-between;
-            align-items: center;
+            align-items: flex-end;
         }
-        .logo { font-size: 32px; font-weight: bold; letter-spacing: 2px; color: #fff; }
-        .logo span { color: #006e50; }
+        .logo { font-size: 28px; font-weight: bold; letter-spacing: 3px; color: #fff; }
+        .logo span { color: var(--accent-color); }
+        .timestamp { font-size: 11px; color: var(--text-dim); text-align: right; }
 
+        /* GRID */
         .grid { 
             display: grid; 
             grid-template-columns: repeat(12, 1fr); 
             gap: 15px; 
         }
         .card { 
-            background: #111418; 
-            border: 1px solid #2d3436; 
+            background: var(--card-bg); 
+            border: 1px solid var(--border-color); 
             padding: 15px; 
             border-radius: 4px;
-            min-height: 400px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
         }
         .col-12 { grid-column: span 12; }
+        .col-8 { grid-column: span 8; }
         .col-4 { grid-column: span 4; }
+        .col-3 { grid-column: span 3; }
 
         .label { 
-            font-size: 11px; 
-            color: #7a92aa; 
+            font-size: 10px; 
+            color: var(--text-dim); 
             text-transform: uppercase; 
-            margin-bottom: 15px;
+            margin-bottom: 12px;
             font-weight: bold;
-            border-left: 3px solid #006e50;
+            border-left: 3px solid var(--accent-color);
             padding-left: 8px;
+            display: flex;
+            justify-content: space-between;
         }
 
-        @media (max-width: 1000px) {
-            .col-4 { grid-column: span 12; }
+        /* RESPONSIVE */
+        @media (max-width: 1024px) {
+            .col-8, .col-4, .col-3 { grid-column: span 12; }
         }
     </style>
 </head>
@@ -60,16 +79,19 @@
     <div class="header">
         <div>
             <div class="logo">RADAR<span>-FLUX</span></div>
-            <div style="font-size: 10px; color: #7a92aa;">GLOBAL EQUITY RADAR MONITOR</div>
+            <div style="font-size: 10px; color: var(--text-dim);">STRATEGIC ASSET ALLOCATION TERMINAL</div>
         </div>
-        <div style="color: #008f60; font-size: 12px; font-weight: bold;">● LIVE FEED</div>
+        <div class="timestamp">
+            <div id="clock">CARICAMENTO...</div>
+            <div style="color: #238636; font-weight: bold;">● DATA SOURCE: TRADINGVIEW (USA LISTED)</div>
+        </div>
     </div>
 
     <div class="grid">
         
-        <div class="card col-12">
-            <div class="label">WORLD MARKET SENTIMENT (MSCI World Proxy)</div>
-            <div class="tradingview-widget-container" style="height: 330px;">
+        <div class="card col-8">
+            <div class="label">Sentiment Mercato Mondiale (URTH - MSCI World)</div>
+            <div class="tradingview-widget-container" style="height: 350px;">
                 <div class="tradingview-widget-container__widget"></div>
                 <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-technical-analysis.js" async>
                 {
@@ -77,7 +99,7 @@
                     "width": "100%",
                     "isTransparent": true,
                     "height": "100%",
-                    "symbol": "CAPITALCOM:WORLD",
+                    "symbol": "AMEX:URTH",
                     "showIntervalTabs": true,
                     "locale": "it",
                     "colorTheme": "dark"
@@ -87,7 +109,7 @@
         </div>
 
         <div class="card col-4">
-            <div class="label">EUROPA: EUROSTOXX 600</div>
+            <div class="label">Risk Gauge (VIX - Volatilità)</div>
             <div class="tradingview-widget-container" style="height: 350px;">
                 <div class="tradingview-widget-container__widget"></div>
                 <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-technical-analysis.js" async>
@@ -96,7 +118,7 @@
                     "width": "100%",
                     "isTransparent": true,
                     "height": "100%",
-                    "symbol": "INDEX:SXXP",
+                    "symbol": "TVC:VIX",
                     "showIntervalTabs": false,
                     "locale": "it",
                     "colorTheme": "dark"
@@ -106,7 +128,7 @@
         </div>
 
         <div class="card col-4">
-            <div class="label">EMERGENTI: SHANGHAI COMP.</div>
+            <div class="label">Europa: Euro Stoxx 50 (FEZ)</div>
             <div class="tradingview-widget-container" style="height: 350px;">
                 <div class="tradingview-widget-container__widget"></div>
                 <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-technical-analysis.js" async>
@@ -115,7 +137,7 @@
                     "width": "100%",
                     "isTransparent": true,
                     "height": "100%",
-                    "symbol": "SSE:000001",
+                    "symbol": "AMEX:FEZ",
                     "showIntervalTabs": false,
                     "locale": "it",
                     "colorTheme": "dark"
@@ -125,7 +147,7 @@
         </div>
 
         <div class="card col-4">
-            <div class="label">GIAPPONE: NIKKEI 225</div>
+            <div class="label">Cina: MSCI China (MCHI)</div>
             <div class="tradingview-widget-container" style="height: 350px;">
                 <div class="tradingview-widget-container__widget"></div>
                 <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-technical-analysis.js" async>
@@ -134,21 +156,76 @@
                     "width": "100%",
                     "isTransparent": true,
                     "height": "100%",
-                    "symbol": "INDEX:NKY",
+                    "symbol": "NASDAQ:MCHI",
                     "showIntervalTabs": false,
                     "locale": "it",
                     "colorTheme": "dark"
                 }
+                </script>
+            </div>
+        </div>
+
+        <div class="card col-4">
+            <div class="label">Giappone: MSCI Japan (EWJ)</div>
+            <div class="tradingview-widget-container" style="height: 350px;">
+                <div class="tradingview-widget-container__widget"></div>
+                <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-technical-analysis.js" async>
+                {
+                    "interval": "1D",
+                    "width": "100%",
+                    "isTransparent": true,
+                    "height": "100%",
+                    "symbol": "AMEX:EWJ",
+                    "showIntervalTabs": false,
+                    "locale": "it",
+                    "colorTheme": "dark"
+                }
+                </script>
+            </div>
+        </div>
+
+        <div class="card col-12">
+            <div class="label">Confronto Forza Relativa: Azioni (SPY) vs Bond (TLT)</div>
+            <div style="height: 400px;">
+                <div id="tv-compare-chart" style="height:100%; width:100%;"></div>
+                <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+                <script type="text/javascript">
+                new TradingView.MediumWidget({
+                  "symbols": [
+                    ["Equity (S&P 500)", "AMEX:SPY|12M"],
+                    ["Bonds (20Y Treasury)", "NASDAQ:TLT|12M"]
+                  ],
+                  "chartOnly": false,
+                  "width": "100%",
+                  "height": "100%",
+                  "locale": "it",
+                  "colorTheme": "dark",
+                  "gridLineColor": "rgba(42, 46, 57, 0)",
+                  "fontColor": "#787b86",
+                  "isTransparent": true,
+                  "autosize": true,
+                  "container_id": "tv-compare-chart"
+                });
                 </script>
             </div>
         </div>
 
     </div>
 
-    <div style="text-align: center; margin-top: 30px; font-size: 10px; color: #4b5563;">
-        RADAR-FLUX | GLOBAL DASHBOARD v4.0
+    <div style="text-align: center; margin: 40px 0; font-size: 10px; color: var(--text-dim);">
+        TERMINAL RADAR-FLUX | NO-CODE INTEGRATION | ASSET CLASS ANALYSIS
     </div>
 </div>
+
+<script>
+    function updateClock() {
+        const now = new Date();
+        const options = { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' };
+        document.getElementById('clock').textContent = "ORA LOCALE: " + now.toLocaleString('it-IT', options);
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+</script>
 
 </body>
 </html>
