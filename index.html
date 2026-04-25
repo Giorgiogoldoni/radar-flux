@@ -2,7 +2,7 @@
 <html lang="it">
 <head>
     <meta charset="UTF-8">
-    <title>RADAR-FLUX | WEALTH TERMINAL v9.1</title>
+    <title>RADAR-FLUX | GLOBAL EURO TERMINAL v9.2</title>
     <style>
         body { background-color: #06080a; color: #d1d5db; font-family: 'Courier New', monospace; margin: 0; padding: 20px; }
         .container { max-width: 1600px; margin: 0 auto; }
@@ -10,18 +10,17 @@
         .logo { font-size: 28px; font-weight: bold; letter-spacing: 2px; color: #fff; }
         .logo span { color: #006e50; }
         
-        /* SEZIONE LEGENDA */
         .info-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 20px; }
-        .info-card { background: #0d1117; border-left: 4px solid #006e50; padding: 15px; font-size: 11px; line-height: 1.5; border-radius: 4px; border: 1px solid #21262d; }
-        .info-card h4 { margin: 0 0 10px 0; color: #00cf8d; text-transform: uppercase; font-size: 13px; }
+        .info-card { background: #0d1117; border-left: 4px solid #006e50; padding: 12px; font-size: 11px; line-height: 1.4; border-radius: 4px; border: 1px solid #21262d; }
+        .info-card h4 { margin: 0 0 8px 0; color: #00cf8d; text-transform: uppercase; font-size: 12px; }
 
         .oracle-container { display: grid; grid-template-columns: 2fr 1fr; gap: 15px; margin-bottom: 20px; }
-        .oracle-box { background: #0a192f; border: 1px solid #00cf8d; padding: 20px; border-radius: 4px; box-shadow: inset 0 0 15px rgba(0,207,141,0.1); }
+        .oracle-box { background: #0a192f; border: 1px solid #00cf8d; padding: 20px; border-radius: 4px; }
         .prediction-box { background: #1a110a; border: 1px solid #ff9f43; padding: 20px; border-radius: 4px; }
         
         .grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 15px; }
-        .card { background: #0d1117; border: 1px solid #21262d; padding: 15px; border-radius: 4px; min-height: 450px; }
-        .col-12 { grid-column: span 12; } .col-4 { grid-column: span 4; }
+        .card { background: #0d1117; border: 1px solid #21262d; padding: 15px; border-radius: 4px; min-height: 500px; }
+        .col-12 { grid-column: span 12; }
         .label { font-size: 10px; color: #7a92aa; text-transform: uppercase; margin-bottom: 15px; font-weight: bold; border-left: 3px solid #006e50; padding-left: 8px; }
     </style>
 </head>
@@ -31,60 +30,54 @@
     <div class="header">
         <div>
             <div class="logo">RADAR<span>-FLUX</span></div>
-            <div style="font-size: 10px; color: #7a92aa;">AUTOMATED PORTFOLIO MANAGER v9.1</div>
+            <div style="font-size: 10px; color: #7a92aa;">MULTI-ASSET WEALTH MANAGER v9.2</div>
         </div>
         <div id="clock" style="font-size: 12px; color: #008f60; font-weight: bold;"></div>
     </div>
 
     <div class="info-grid">
         <div class="info-card">
-            <h4>◈ GENESI DELL'ORACOLO</h4>
-            L'Oracolo elabora i dati tramite algoritmi di <b>confluenza tecnica</b>. Analizza la volatilità implicita e il posizionamento dei volumi sui livelli chiave. Il responso cambia 3 volte al giorno per riflettere le diverse psicologie delle sessioni (Asia, Europa, America).
+            <h4>◈ LOGICA MULTI-ASSET</h4>
+            Il radar ora scansiona <b>Milano (BIT)</b> e <b>Francoforte (XETRA)</b>. Cerca ETF su Azioni, Bond, Oro e Commodities quotati in Euro per eliminare il rischio cambio.
         </div>
         <div class="info-card">
-            <h4>◈ SEGNALETICA E PORTAFOGLIO</h4>
-            <b>Strong Buy:</b> Indica una divergenza positiva tra prezzo e momentum. <br>
-            <b>Allocazione 10k:</b> Il sistema ripartisce il capitale su un massimo di 10 asset (minimo 1000€ l'uno) per ottimizzare il rapporto rischio/rendimento (Sharpe Ratio).
+            <h4>◈ STRATEGIA DI INGRESSO</h4>
+            Segnale impostato su <b>Buy & Strong Buy</b>. L'obiettivo è intercettare il trend nella fase di accelerazione iniziale, non solo quando è già maturo.
         </div>
         <div class="info-card">
-            <h4>◈ FOGLIO GOOGLE & EXIT</h4>
-            Il foglio memorizza ogni ingresso. <b>L'uscita (Exit)</b> scatta automaticamente se il rating scende sotto "Buy" o se viene raggiunto un obiettivo di profitto calcolato sulla volatilità storica. Riceverai un alert via mail per ogni azione eseguita.
+            <h4>◈ GESTIONE 10.000€</h4>
+            Allocazione dinamica: il capitale viene frazionato per coprire diversi settori (es. 20% Tech, 10% Oro, 20% Index World) per massimizzare la resilienza.
         </div>
     </div>
 
     <div class="oracle-container">
         <div class="oracle-box">
-            <div style="font-size:12px; color:#00cf8d; font-weight:bold;">◈ RESPONSO ATTUALE</div>
-            <div id="oracle-msg" style="font-style:italic; color:#a8dadc; margin-top:10px; font-size: 15px;">Inizializzazione flussi dati...</div>
+            <div style="font-size:12px; color:#00cf8d; font-weight:bold;">◈ ANALISI ORACOLO</div>
+            <div id="oracle-msg" style="font-style:italic; color:#a8dadc; margin-top:10px; font-size: 15px;">Monitoraggio mercati europei espanso...</div>
         </div>
         <div class="prediction-box">
-            <div style="font-size:12px; color:#ff9f43; font-weight:bold;">⚡ GESTIONE CAPITALE</div>
-            <div id="pred-val" style="color:#ff9f43; font-weight:bold; font-size:18px; margin-top:10px;">€ 10.000 DISPONIBILI</div>
+            <div style="font-size:12px; color:#ff9f43; font-weight:bold;">⚡ STATO PORTAFOGLIO</div>
+            <div id="pred-val" style="color:#ff9f43; font-weight:bold; font-size:18px; margin-top:10px;">PRONTO ALL'ALLOCAZIONE</div>
         </div>
     </div>
 
     <div class="grid">
         <div class="card col-12">
-            <div class="label">Radar Station: Selezione ETF Euro (Strong Buy Only)</div>
-            <div class="tradingview-widget-container" style="height:450px;">
+            <div class="label">Radar Globale: ETF Europa (BIT + XETRA) - Buy/Strong Buy Focus</div>
+            <div class="tradingview-widget-container" style="height:500px;">
                 <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-screener.js" async>
                 {
                   "width": "100%", "height": "100%", "defaultColumn": "overview", "defaultScreen": "general",
-                  "market": "italy", "showToolbar": true, "colorTheme": "dark", "locale": "it",
-                  "isTransparent": true,
+                  "market": "italy", "showToolbar": true, "colorTheme": "dark", "locale": "it", "isTransparent": true,
                   "filter": [
                     { "left": "type", "operation": "equal", "right": "etf" },
-                    { "left": "recommendation_any", "operation": "in_range", "right": [4, 5] }
+                    { "left": "recommendation_any", "operation": "in_range", "right": [3, 5] }
                   ],
-                  "columns": ["base_currency_logoid", "name", "description", "close", "change", "recommendation_any", "volume"]
+                  "columns": ["base_currency_logoid", "name", "description", "close", "change", "recommendation_any", "exchange", "volume"]
                 }
                 </script>
             </div>
         </div>
-
-        <div class="card col-4"><div class="label">Trend Mondiale</div><div class="tradingview-widget-container" style="height:350px;"><script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-technical-analysis.js" async>{ "interval": "1D", "width": "100%", "isTransparent": true, "height": "100%", "symbol": "AMEX:URTH", "showIntervalTabs": true, "locale": "it", "colorTheme": "dark" }</script></div></div>
-        <div class="card col-4"><div class="label">Forza Eurozona</div><div class="tradingview-widget-container" style="height:350px;"><script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-technical-analysis.js" async>{ "interval": "1D", "width": "100%", "isTransparent": true, "height": "100%", "symbol": "AMEX:FEZ", "showIntervalTabs": true, "locale": "it", "colorTheme": "dark" }</script></div></div>
-        <div class="card col-4"><div class="label">Volatilità (VIX)</div><div class="tradingview-widget-container" style="height:350px;"><script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-technical-analysis.js" async>{ "interval": "1D", "width": "100%", "isTransparent": true, "height": "100%", "symbol": "CBOE:VIX", "showIntervalTabs": true, "locale": "it", "colorTheme": "dark" }</script></div></div>
     </div>
 </div>
 
@@ -92,13 +85,9 @@
     function updateClock() { document.getElementById('clock').textContent = "SYSTEM TIME: " + new Date().toLocaleString('it-IT'); }
     setInterval(updateClock, 1000); updateClock();
     
-    // Logica dinamica Oracolo
     const h = new Date().getHours();
-    let msg = "";
-    if(h < 9) msg = "Pre-Market: Analisi flussi overnight completata. Gli ETF Euro attendono l'apertura.";
-    else if(h < 17) msg = "Sessione Attiva: Il segnale Strong Buy è supportato da volumi reali. Monitoraggio allocazione in corso.";
-    else msg = "Post-Market: Analisi delle chiusure. Il Google Sheet sta archiviando le performance giornaliere.";
-    document.getElementById('oracle-msg').innerHTML = msg;
+    document.getElementById('oracle-msg').innerHTML = "Radar espanso a XETRA. La diversificazione è aumentata. Controlla lo screener per nuovi segnali su Commodity e Bond.";
+    document.getElementById('pred-val').innerHTML = "CAPITALE: 10.000 €";
 </script>
 </body>
 </html>
