@@ -2,64 +2,113 @@
 <html lang="it">
 <head>
     <meta charset="UTF-8">
-    <title>RADAR-FLUX v10.2 | MOMENTUM FOCUS</title>
+    <title>RADAR-FLUX v10.4 | MOMENTUM DECISION HUB</title>
     <style>
-        :root { --bg: #ffffff; --text: #1a202c; --border: #e2e8f0; --accent: #2563eb; --momentum: #059669; }
-        body { background-color: var(--bg); color: var(--text); font-family: 'Segoe UI', system-ui, sans-serif; margin: 0; padding: 20px; }
+        :root { --strong-buy: #065f46; --buy: #1e40af; --hold: #92400e; --bg-green: #ecfdf5; --bg-blue: #eff6ff; --bg-orange: #fffbeb; }
+        body { background-color: #ffffff; color: #1a202c; font-family: 'Segoe UI', system-ui, sans-serif; margin: 0; padding: 20px; }
         .container { max-width: 1200px; margin: 0 auto; }
-        .header { border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: baseline; }
-        .logo { font-size: 22px; font-weight: 800; color: #000; }
-        .logo span { color: var(--accent); }
-        .card { background: #fff; border: 1px solid var(--border); border-radius: 8px; padding: 15px; min-height: 600px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
-        .label { font-size: 11px; color: #64748b; text-transform: uppercase; margin-bottom: 15px; font-weight: bold; letter-spacing: 1px; }
-        .badge { background: var(--momentum); color: white; padding: 2px 8px; border-radius: 4px; font-size: 10px; margin-left: 10px; }
+        .header { border-bottom: 3px solid #1e40af; padding-bottom: 15px; margin-bottom: 25px; display: flex; justify-content: space-between; align-items: center; }
+        
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); border-radius: 8px; overflow: hidden; }
+        th { background: #1e40af; color: white; text-align: left; padding: 15px; font-size: 12px; text-transform: uppercase; letter-spacing: 1px; }
+        td { padding: 15px; border-bottom: 1px solid #e2e8f0; font-size: 14px; }
+        tr:hover { background-color: #f8fafc; }
+
+        .rank-badge { padding: 6px 12px; border-radius: 6px; font-weight: 800; font-size: 11px; display: inline-block; min-width: 100px; text-align: center; }
+        .status-strong { background: var(--bg-green); color: var(--strong-buy); border: 1px solid #10b981; }
+        .status-buy { background: var(--bg-blue); color: var(--buy); border: 1px solid #3b82f6; }
+        .status-hold { background: var(--bg-orange); color: var(--hold); border: 1px solid #f59e0b; }
+        
+        .ticker { font-weight: 800; color: #000; font-family: monospace; font-size: 16px; }
+        .category-tag { font-size: 10px; color: #64748b; background: #f1f5f9; padding: 2px 6px; border-radius: 4px; margin-top: 4px; display: inline-block; }
     </style>
 </head>
 <body>
 
 <div class="container">
     <div class="header">
-        <div class="logo">RADAR<span>-FLUX</span> <small style="font-weight: 400; font-size: 11px;">v10.2 SELECT</small></div>
-        <div style="font-size: 11px; font-weight: bold; color: #64748b;">TARGET: NUOVO PORTAFOGLIO (10.000€)</div>
+        <div>
+            <h1 style="margin:0; font-size: 24px;">RADAR-FLUX <span>v10.4</span></h1>
+            <p style="margin:5px 0 0 0; color: #64748b; font-size: 13px;">Incrocio Quantitativo: <b>RAPTOR Core</b> vs <b>Yahoo Analyst Rating</b></p>
+        </div>
+        <div style="text-align: right;">
+            <div style="font-size: 11px; font-weight: bold; color: #1e40af;">CAPITALE ALLOCATO: 10.000€</div>
+            <div style="font-size: 10px; color: #94a3b8;">Ultimo Aggiornamento Dati: Oggi</div>
+        </div>
     </div>
 
-    <div class="card">
-        <div class="label">Analisi Quantitativa & Rating <span class="badge">MOMENTUM ATTIVO</span></div>
-        <div class="tradingview-widget-container" style="height: 550px;">
-            <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-market-quotes.js" async>
-            {
-              "width": "100%",
-              "height": "100%",
-              "symbolsGroups": [
-                {
-                  "name": "STRATEGIA 10k (RAPTOR)",
-                  "symbols": [
-                    { "name": "MIL:EMLI", "displayName": "EM Local Bond (PIMCO)" },
-                    { "name": "MIL:EUHA", "displayName": "Euro High Yield (PIMCO)" },
-                    { "name": "MIL:NTSZ", "displayName": "Euro Efficient Core (WT)" },
-                    { "name": "MIL:WS5X", "displayName": "Euro Stoxx 50 (WT)" },
-                    { "name": "MIL:STHE", "displayName": "US Short High Yield" },
-                    { "name": "MIL:PJS1", "displayName": "Euro Short Maturity" },
-                    { "name": "MIL:SWDA", "displayName": "World Acc (Core)" }
-                  ]
-                }
-              ],
-              "showSymbolLogo": true,
-              "colorTheme": "light",
-              "isTransparent": false,
-              "locale": "it"
-            }
-            </script>
-        </div>
-        
-        <div style="margin-top: 20px; border-top: 1px solid var(--border); padding-top: 15px;">
-            <div class="label">Note Operative Momento</div>
-            <p style="font-size: 13px; color: #475569; line-height: 1.6;">
-                I titoli sopra indicati sono stati estratti dal file <b>Nuovo Portafoglio</b>. <br>
-                <b>Certezza del Momento:</b> In questa vista, la colonna "Recensione" di TradingView agisce come primo filtro. 
-                Se vedi "Forte Acquisto", il momento tecnico è confermato.
-            </p>
-        </div>
+    <table>
+        <thead>
+            <tr>
+                <th>ETF / Strategia</th>
+                <th>Rating Yahoo</th>
+                <th>Segnale Raptor</th>
+                <th>Certezza Momento</th>
+                <th>Azione Suggerita</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><span class="ticker">WNAS</span><br><span class="category-tag">NASDAQ-100 Momentum</span></td>
+                <td><span class="rank-badge status-strong">1.2 STRONG BUY</span></td>
+                <td>🔥 ONE / LEVA</td>
+                <td style="font-weight: bold; color: #059669;">MASSIMA</td>
+                <td><b>ENTRY / ADD</b></td>
+            </tr>
+            <tr>
+                <td><span class="ticker">NTSZ</span><br><span class="category-tag">Eurozone Efficient Core</span></td>
+                <td><span class="rank-badge status-strong">1.4 STRONG BUY</span></td>
+                <td>✅ TWO / ALIGN</td>
+                <td style="font-weight: bold; color: #059669;">ALTA</td>
+                <td><b>ACCUMULA</b></td>
+            </tr>
+            <tr>
+                <td><span class="ticker">WSPX</span><br><span class="category-tag">S&P 500 Core</span></td>
+                <td><span class="rank-badge status-buy">1.6 BUY</span></td>
+                <td>✅ ALIGN</td>
+                <td style="color: #2563eb;">MEDIA-ALTA</td>
+                <td><b>HOLD / MANTIENI</b></td>
+            </tr>
+            
+            <tr>
+                <td><span class="ticker">EUHA</span><br><span class="category-tag">Euro High Yield (Acc)</span></td>
+                <td><span class="rank-badge status-buy">1.9 BUY</span></td>
+                <td>平 STABILE</td>
+                <td style="color: #2563eb;">MEDIA</td>
+                <td><b>REDDITO</b></td>
+            </tr>
+            <tr>
+                <td><span class="ticker">STHE</span><br><span class="category-tag">US High Yield (Hedged)</span></td>
+                <td><span class="rank-badge status-buy">2.1 BUY</span></td>
+                <td>平 STABILE</td>
+                <td style="color: #2563eb;">MEDIA</td>
+                <td><b>REDDITO</b></td>
+            </tr>
+
+            <tr>
+                <td><span class="ticker">EMLI</span><br><span class="category-tag">EM Local Bond</span></td>
+                <td><span class="rank-badge status-hold">2.8 HOLD</span></td>
+                <td>⚠️ ALERT</td>
+                <td style="color: #d97706;">BASSISSIMA</td>
+                <td><b>WATCH / NO-ENTRY</b></td>
+            </tr>
+            <tr>
+                <td><span class="ticker">WRTY</span><br><span class="category-tag">Russell 2000 Small Cap</span></td>
+                <td><span class="rank-badge status-hold">3.1 HOLD</span></td>
+                <td>⚠️ ALERT</td>
+                <td style="color: #d97706;">NULLA</td>
+                <td><b>EVITARE</b></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div style="margin-top: 30px; padding: 20px; background: #f8fafc; border-left: 5px solid #1e40af; border-radius: 4px;">
+        <h4 style="margin: 0 0 10px 0; font-size: 14px; color: #1e40af;">Protocollo Decisionale 10.000€</h4>
+        <p style="margin: 0; font-size: 13px; line-height: 1.6; color: #475569;">
+            In base all'estrazione odierna, la <b>certezza matematica del trend</b> risiede nel settore Tech (WNAS) e nell'efficienza europea (NTSZ). 
+            Il portafoglio deve privilegiare questi due ingressi. La parte obbligazionaria (EUHA/STHE) serve solo come ancora di stabilità. 
+            <b>Non allocare capitale su EMLI o WRTY</b> finché il rating Yahoo non scende sotto la soglia di 2.0.
+        </p>
     </div>
 </div>
 
