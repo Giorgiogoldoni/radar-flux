@@ -2,92 +2,74 @@
 <html lang="it">
 <head>
     <meta charset="UTF-8">
-    <title>RADAR-FLUX v9.9 | SINGLE ASSET CORE</title>
+    <title>RADAR-FLUX v10.0 | WHITE TABLE</title>
     <style>
-        :root { --bg: #05070a; --card-bg: #0b0f15; --accent: #0091ff; --text: #a0aec0; --border: #1a202c; }
-        body { background-color: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; margin: 0; padding: 20px; overflow: hidden; }
-        .container { max-width: 1600px; margin: 0 auto; height: 95vh; display: flex; flex-direction: column; }
-        .header { border-bottom: 1px solid var(--border); padding-bottom: 15px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; }
-        .logo { font-size: 20px; font-weight: 900; color: #fff; letter-spacing: 2px; }
+        :root { --bg: #ffffff; --text: #1a202c; --border: #e2e8f0; --accent: #2563eb; }
+        body { background-color: var(--bg); color: var(--text); font-family: 'Segoe UI', system-ui, sans-serif; margin: 0; padding: 20px; }
+        .container { max-width: 1200px; margin: 0 auto; }
+        .header { border-bottom: 2px solid var(--text); padding-bottom: 10px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: baseline; }
+        .logo { font-size: 24px; font-weight: 800; letter-spacing: -0.5px; color: #000; }
         .logo span { color: var(--accent); }
-        
-        .main-layout { display: grid; grid-template-columns: 1fr 350px; gap: 20px; flex-grow: 1; }
-        .chart-area { background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
-        .sidebar { display: flex; flex-direction: column; gap: 20px; }
-        .side-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; padding: 10px; flex: 1; }
-        
-        .tag { background: rgba(0, 145, 255, 0.1); color: var(--accent); padding: 4px 10px; border-radius: 4px; font-size: 11px; font-weight: bold; }
+        .card { background: #fff; border: 1px solid var(--border); border-radius: 8px; padding: 15px; height: 800px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        .label { font-size: 12px; color: #64748b; text-transform: uppercase; margin-bottom: 15px; font-weight: bold; letter-spacing: 0.5px; }
+        .status { font-size: 11px; background: #f1f5f9; padding: 4px 10px; border-radius: 20px; color: #475569; border: 1px solid #cbd5e1; }
     </style>
 </head>
 <body>
 
 <div class="container">
     <div class="header">
-        <div class="logo">RADAR<span>-FLUX</span> <small style="font-size: 10px; opacity: 0.5;">V9.9 DEEP-CORE</small></div>
-        <div style="display: flex; gap: 15px; align-items: center;">
-            <span class="tag">TARGET: iShares Core MSCI World (SWDA)</span>
-            <div id="clock" style="font-size: 12px; font-family: monospace;"></div>
-        </div>
+        <div class="logo">RADAR<span>-FLUX</span> <small style="font-weight: 400; font-size: 12px;">v10.0 LIGHT</small></div>
+        <div class="status">DATA SOURCE: RAPTOR_ETF_Universe_v2</div>
     </div>
 
-    <div class="main-layout">
-        <div class="chart-area">
-            <div class="tradingview-widget-container" style="height: 100%; width: 100%;">
-                <div id="tradingview_chart" style="height: 100%;"></div>
-                <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
-                <script type="text/javascript">
-                new TradingView.widget({
-                  "autosize": true,
-                  "symbol": "MIL:SWDA",
-                  "interval": "D",
-                  "timezone": "Europe/Rome",
-                  "theme": "dark",
-                  "style": "1",
-                  "locale": "it",
-                  "toolbar_bg": "#0b0f15",
-                  "enable_publishing": false,
-                  "hide_side_toolbar": false,
-                  "allow_symbol_change": true,
-                  "container_id": "tradingview_chart"
-                });
-                </script>
-            </div>
-        </div>
-
-        <div class="sidebar">
-            <div class="side-card">
-                <div style="font-size: 11px; margin-bottom: 10px; font-weight: bold;">SENTIMENT TECNICO</div>
-                <div class="tradingview-widget-container">
-                    <div class="tradingview-widget-container__widget"></div>
-                    <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-technical-analysis.js" async>
-                    {
-                      "interval": "1D", "width": "100%", "isTransparent": true, "height": "100%",
-                      "symbol": "MIL:SWDA", "showIntervalTabs": true, "displayMode": "single",
-                      "locale": "it", "colorTheme": "dark"
-                    }
-                    </script>
-                </div>
-            </div>
-
-            <div class="side-card" style="flex: 0.5;">
-                <div style="font-size: 11px; margin-bottom: 10px; font-weight: bold;">DATI FONDAMENTALI</div>
-                <div class="tradingview-widget-container">
-                    <div class="tradingview-widget-container__widget"></div>
-                    <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-symbol-profile.js" async>
-                    {
-                      "symbol": "MIL:SWDA", "width": "100%", "height": "100%",
-                      "colorTheme": "dark", "isTransparent": true, "locale": "it"
-                    }
-                    </script>
-                </div>
-            </div>
+    <div class="card">
+        <div class="label">Monitoraggio Portafoglio Strategico (Solo ETF)</div>
+        <div class="tradingview-widget-container" style="height: calc(100% - 30px);">
+            <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-market-quotes.js" async>
+            {
+              "width": "100%",
+              "height": "100%",
+              "symbolsGroups": [
+                {
+                  "name": "EQUITY CORE",
+                  "symbols": [
+                    { "name": "MIL:SWDA", "displayName": "MSCI World Acc" },
+                    { "name": "MIL:EIMI", "displayName": "Emerging Markets" },
+                    { "name": "MIL:SXR8", "displayName": "S&P 500 Acc" },
+                    { "name": "MIL:XDWT", "displayName": "World Technology" },
+                    { "name": "MIL:XDEM", "displayName": "MSCI World Momentum" },
+                    { "name": "MIL:NTSZ", "displayName": "Eurozone Efficient Core" }
+                  ]
+                },
+                {
+                  "name": "FIXED INCOME & BONDS",
+                  "symbols": [
+                    { "name": "MIL:EMLI", "displayName": "PIMCO EM Local Bond" },
+                    { "name": "MIL:EUHA", "displayName": "PIMCO Euro High Yield" },
+                    { "name": "MIL:AGGH", "displayName": "Global Aggregate Bond" },
+                    { "name": "MIL:SEGA", "displayName": "Euro Gov Bond" }
+                  ]
+                },
+                {
+                  "name": "COMMODITIES & HAVENS",
+                  "symbols": [
+                    { "name": "MIL:SGLD", "displayName": "Physical Gold" },
+                    { "name": "MIL:PHAG", "displayName": "Physical Silver" },
+                    { "name": "MIL:COPA", "displayName": "WisdomTree Copper" },
+                    { "name": "MIL:CRUD", "displayName": "WTI Crude Oil" }
+                  ]
+                }
+              ],
+              "showSymbolLogo": true,
+              "colorTheme": "light",
+              "isTransparent": false,
+              "locale": "it"
+            }
+            </script>
         </div>
     </div>
 </div>
 
-<script>
-    function updateClock() { document.getElementById('clock').textContent = new Date().toLocaleString('it-IT'); }
-    setInterval(updateClock, 1000); updateClock();
-</script>
 </body>
 </html>
