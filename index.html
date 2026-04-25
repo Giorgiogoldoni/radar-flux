@@ -2,23 +2,19 @@
 <html lang="it">
 <head>
     <meta charset="UTF-8">
-    <title>RADAR-FLUX | ETF PURIST v9.3</title>
+    <title>RADAR-FLUX v9.4 | ETF STRATEGIC ENGINE</title>
     <style>
         body { background-color: #06080a; color: #d1d5db; font-family: 'Courier New', monospace; margin: 0; padding: 20px; }
         .container { max-width: 1600px; margin: 0 auto; }
         .header { border-bottom: 2px solid #006e50; padding-bottom: 10px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; }
         .logo { font-size: 28px; font-weight: bold; letter-spacing: 2px; color: #fff; }
-        .logo span { color: #006e50; }
+        .logo span { color: #00cf8d; }
         
-        .info-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 20px; }
-        .info-card { background: #0d1117; border-left: 4px solid #006e50; padding: 12px; font-size: 11px; line-height: 1.4; border-radius: 4px; border: 1px solid #21262d; }
-        .info-card h4 { margin: 0 0 8px 0; color: #00cf8d; text-transform: uppercase; font-size: 12px; }
-
-        .oracle-box { background: #0a192f; border: 1px solid #00cf8d; padding: 20px; border-radius: 4px; margin-bottom: 20px; }
+        .grid-triple { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 20px; }
+        .card { background: #0d1117; border: 1px solid #21262d; padding: 15px; border-radius: 4px; height: 650px; }
+        .label { font-size: 11px; color: #00cf8d; text-transform: uppercase; margin-bottom: 15px; font-weight: bold; border-left: 3px solid #006e50; padding-left: 10px; }
         
-        .grid { display: grid; grid-template-columns: 1fr; gap: 15px; }
-        .card { background: #0d1117; border: 1px solid #21262d; padding: 15px; border-radius: 4px; min-height: 600px; }
-        .label { font-size: 10px; color: #7a92aa; text-transform: uppercase; margin-bottom: 15px; font-weight: bold; border-left: 3px solid #006e50; padding-left: 8px; }
+        .status-bar { background: #0a192f; border: 1px solid #00cf8d; padding: 15px; border-radius: 4px; margin-bottom: 20px; font-size: 13px; }
     </style>
 </head>
 <body>
@@ -27,44 +23,64 @@
     <div class="header">
         <div>
             <div class="logo">RADAR<span>-FLUX</span></div>
-            <div style="font-size: 10px; color: #7a92aa;">ETF SPECIALIZED TERMINAL v9.3</div>
+            <div style="font-size: 10px; color: #7a92aa;">MULTIPLE ASSET SEARCH ENGINE v9.4</div>
         </div>
-        <div id="clock" style="font-size: 12px; color: #008f60; font-weight: bold;"></div>
+        <div id="clock" style="font-size: 12px; color: #00cf8d;"></div>
     </div>
 
-    <div class="info-grid">
-        <div class="info-card">
-            <h4>◈ FILTRO ETF PURO</h4>
-            Azioni singole escluse. Il sistema interroga solo <b>Fondi Indicizzati (ETF)</b> per garantire stabilità e ridurre il rischio specifico.
-        </div>
-        <div class="info-card">
-            <h4>◈ SEGNALETICA BUY+</h4>
-            Vengono mostrati ETF con rating da <b>Buy a Strong Buy</b>. Se la lista è corta, significa che il mercato è in fase correttiva o incerta.
-        </div>
-        <div class="info-card">
-            <h4>◈ ALLOCAZIONE 10k</h4>
-            Il capitale viene distribuito solo su ETF selezionati dal radar. Obiettivo: diversificazione per asset class (Oro, Bond, Equity).
-        </div>
+    <div class="status-bar">
+        <b>FILTRO CRITICO ATTIVO:</b> Esclusione totale azioni (Stock-Picking OFF). Estrazione solo <b>Exchange Traded Funds</b> per portafoglio diversificato.
     </div>
 
-    <div class="oracle-box">
-        <div style="font-size:12px; color:#00cf8d; font-weight:bold;">◈ STATUS ORACOLO</div>
-        <div id="oracle-msg" style="font-style:italic; color:#a8dadc; margin-top:10px; font-size: 15px;">Filtro azioni rimosso. Caricamento database ETF Europa...</div>
-    </div>
-
-    <div class="grid">
+    <div class="grid-triple">
         <div class="card">
-            <div class="label">Radar Esclusivo: Solo ETF (Milano + Francoforte)</div>
-            <div class="tradingview-widget-container" style="height:550px;">
+            <div class="label">1. Equity & Growth (Azionario Mond./Sett.)</div>
+            <div class="tradingview-widget-container" style="height:580px;">
                 <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-screener.js" async>
                 {
                   "width": "100%", "height": "100%", "defaultColumn": "overview", "defaultScreen": "general",
                   "market": "italy", "showToolbar": true, "colorTheme": "dark", "locale": "it", "isTransparent": true,
                   "filter": [
                     { "left": "type", "operation": "equal", "right": "etf" },
+                    { "left": "description", "operation": "match", "right": "(World|Tech|USA|Europe|Momentum)" },
                     { "left": "recommendation_any", "operation": "in_range", "right": [3, 5] }
                   ],
-                  "columns": ["base_currency_logoid", "name", "description", "close", "change", "recommendation_any", "exchange", "volume"]
+                  "columns": ["base_currency_logoid", "name", "description", "close", "change", "recommendation_any"]
+                }
+                </script>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="label">2. Safe Havens & Commodities (Oro/Metalli/Energy)</div>
+            <div class="tradingview-widget-container" style="height:580px;">
+                <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-screener.js" async>
+                {
+                  "width": "100%", "height": "100%", "defaultColumn": "overview", "defaultScreen": "general",
+                  "market": "italy", "showToolbar": true, "colorTheme": "dark", "locale": "it", "isTransparent": true,
+                  "filter": [
+                    { "left": "type", "operation": "equal", "right": "etf" },
+                    { "left": "description", "operation": "match", "right": "(Gold|Silver|Commodity|Physical|Energy|Metal)" },
+                    { "left": "recommendation_any", "operation": "in_range", "right": [1, 5] }
+                  ],
+                  "columns": ["base_currency_logoid", "name", "description", "change", "recommendation_any", "exchange"]
+                }
+                </script>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="label">3. Income & Bonds (Obbligazioni/Cedole)</div>
+            <div class="tradingview-widget-container" style="height:580px;">
+                <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-screener.js" async>
+                {
+                  "width": "100%", "height": "100%", "defaultColumn": "overview", "defaultScreen": "general",
+                  "market": "italy", "showToolbar": true, "colorTheme": "dark", "locale": "it", "isTransparent": true,
+                  "filter": [
+                    { "left": "type", "operation": "equal", "right": "etf" },
+                    { "left": "description", "operation": "match", "right": "(Bond|Gov|Treasury|High Yield|Corp)" }
+                  ],
+                  "columns": ["base_currency_logoid", "name", "description", "close", "change", "recommendation_any"]
                 }
                 </script>
             </div>
@@ -73,10 +89,8 @@
 </div>
 
 <script>
-    function updateClock() { document.getElementById('clock').textContent = "SYSTEM TIME: " + new Date().toLocaleString('it-IT'); }
+    function updateClock() { document.getElementById('clock').textContent = "SYSTEM SYNC: " + new Date().toLocaleString('it-IT'); }
     setInterval(updateClock, 1000); updateClock();
-    
-    document.getElementById('oracle-msg').innerHTML = "Pagina ottimizzata. Le azioni sono state escluse dal radar per massimizzare la precisione sui flussi degli ETF.";
 </script>
 </body>
 </html>
