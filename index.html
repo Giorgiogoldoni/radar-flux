@@ -2,106 +2,63 @@
 <html lang="it">
 <head>
     <meta charset="UTF-8">
-    <title>RADAR-FLUX v10.1 | RAPTOR DATA HUB</title>
+    <title>RADAR-FLUX v10.2 | MOMENTUM FOCUS</title>
     <style>
-        :root { --bg: #ffffff; --text: #1a202c; --border: #e2e8f0; --accent: #0052ff; }
-        body { background-color: var(--bg); color: var(--text); font-family: 'Segoe UI', Tahoma, sans-serif; margin: 0; padding: 20px; }
-        .container { max-width: 1400px; margin: 0 auto; }
+        :root { --bg: #ffffff; --text: #1a202c; --border: #e2e8f0; --accent: #2563eb; --momentum: #059669; }
+        body { background-color: var(--bg); color: var(--text); font-family: 'Segoe UI', system-ui, sans-serif; margin: 0; padding: 20px; }
+        .container { max-width: 1200px; margin: 0 auto; }
         .header { border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: baseline; }
-        .logo { font-size: 22px; font-weight: 900; color: #000; }
+        .logo { font-size: 22px; font-weight: 800; color: #000; }
         .logo span { color: var(--accent); }
-        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-        .card { background: #fff; border: 1px solid var(--border); border-radius: 6px; padding: 15px; height: 600px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
-        .full-row { grid-column: span 2; height: 700px; }
-        .label { font-size: 11px; color: #64748b; text-transform: uppercase; margin-bottom: 12px; font-weight: bold; border-left: 3px solid var(--accent); padding-left: 8px; }
+        .card { background: #fff; border: 1px solid var(--border); border-radius: 8px; padding: 15px; min-height: 600px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
+        .label { font-size: 11px; color: #64748b; text-transform: uppercase; margin-bottom: 15px; font-weight: bold; letter-spacing: 1px; }
+        .badge { background: var(--momentum); color: white; padding: 2px 8px; border-radius: 4px; font-size: 10px; margin-left: 10px; }
     </style>
 </head>
 <body>
 
 <div class="container">
     <div class="header">
-        <div class="logo">RADAR<span>-FLUX</span> <small style="font-weight: 400; font-size: 11px; margin-left: 10px;">V10.1 DATA-READY</small></div>
-        <div style="font-size: 11px; font-weight: bold; color: #64748b;">DATA SOURCE: RAPTOR_UNIVERSE_V2 (Agg. 09/04/2026)</div>
+        <div class="logo">RADAR<span>-FLUX</span> <small style="font-weight: 400; font-size: 11px;">v10.2 SELECT</small></div>
+        <div style="font-size: 11px; font-weight: bold; color: #64748b;">TARGET: NUOVO PORTAFOGLIO (10.000€)</div>
     </div>
 
-    <div class="grid">
-        <div class="card">
-            <div class="label">Raptor Core: Equity Global & Tech</div>
-            <div class="tradingview-widget-container" style="height: calc(100% - 25px);">
-                <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-market-quotes.js" async>
+    <div class="card">
+        <div class="label">Analisi Quantitativa & Rating <span class="badge">MOMENTUM ATTIVO</span></div>
+        <div class="tradingview-widget-container" style="height: 550px;">
+            <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-market-quotes.js" async>
+            {
+              "width": "100%",
+              "height": "100%",
+              "symbolsGroups": [
                 {
-                  "width": "100%", "height": "100%", "colorTheme": "light", "isTransparent": false, "locale": "it",
-                  "symbolsGroups": [{
-                    "name": "Equity Top Ranking",
-                    "symbols": [
-                      { "name": "MIL:SWDA", "displayName": "MSCI World Acc" },
-                      { "name": "MIL:EIMI", "displayName": "MSCI Emerging IMI" },
-                      { "name": "MIL:SXR8", "displayName": "S&P 500 Acc" },
-                      { "name": "MIL:XDWT", "displayName": "World Technology" },
-                      { "name": "MIL:XDEM", "displayName": "MSCI World Momentum" },
-                      { "name": "MIL:ANAU", "displayName": "AXA Nasdaq 100" },
-                      { "name": "MIL:WS5X", "displayName": "Euro Stoxx 50" },
-                      { "name": "MIL:HMXJ", "displayName": "MSCI Pacific exJP" }
-                    ]
-                  }]
-                }
-                </script>
-            </div>
-        </div>
-
-        <div class="card">
-            <div class="label">Raptor Income: Bonds & High Yield</div>
-            <div class="tradingview-widget-container" style="height: calc(100% - 25px);">
-                <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-market-quotes.js" async>
-                {
-                  "width": "100%", "height": "100%", "colorTheme": "light", "isTransparent": false, "locale": "it",
-                  "symbolsGroups": [{
-                    "name": "Bonds Selection",
-                    "symbols": [
-                      { "name": "MIL:EMLI", "displayName": "PIMCO EM Local Bond" },
-                      { "name": "MIL:EUHA", "displayName": "PIMCO Euro High Yield" },
-                      { "name": "MIL:AGGH", "displayName": "Global Agg Bond" },
-                      { "name": "MIL:SEGA", "displayName": "Euro Gov Bond" },
-                      { "name": "MIL:STHE", "displayName": "US Short High Yield" },
-                      { "name": "MIL:PJS1", "displayName": "Euro Short Maturity" },
-                      { "name": "MIL:XEON", "displayName": "Xtrackers Overnight" }
-                    ]
-                  }]
-                }
-                </script>
-            </div>
-        </div>
-
-        <div class="card full-row">
-            <div class="label">Raptor Advanced: Efficient Core & Commodities</div>
-            <div class="tradingview-widget-container" style="height: calc(100% - 25px);">
-                <script type="text/javascript" src="https://s3.tradingview.com/external-embedding/embed-widget-market-quotes.js" async>
-                {
-                  "width": "100%", "height": "100%", "colorTheme": "light", "isTransparent": false, "locale": "it",
-                  "symbolsGroups": [
-                    {
-                      "name": "Efficient Core (WisdomTree)",
-                      "symbols": [
-                        { "name": "MIL:NTSZ", "displayName": "Eurozone Efficient" },
-                        { "name": "MIL:NTSG", "displayName": "Global Efficient" },
-                        { "name": "MIL:NTSX", "displayName": "US Efficient Core" }
-                      ]
-                    },
-                    {
-                      "name": "Commodities (Raptor Havens)",
-                      "symbols": [
-                        { "name": "MIL:SGLD", "displayName": "Physical Gold" },
-                        { "name": "MIL:PHAG", "displayName": "Physical Silver" },
-                        { "name": "MIL:AIGI", "displayName": "Industrial Metals" },
-                        { "name": "MIL:AIGC", "displayName": "Broad Commodities" },
-                        { "name": "MIL:COPA", "displayName": "Copper ETP" },
-                        { "name": "MIL:CRUD", "displayName": "WTI Crude Oil" }
-                      ]
-                    }
+                  "name": "STRATEGIA 10k (RAPTOR)",
+                  "symbols": [
+                    { "name": "MIL:EMLI", "displayName": "EM Local Bond (PIMCO)" },
+                    { "name": "MIL:EUHA", "displayName": "Euro High Yield (PIMCO)" },
+                    { "name": "MIL:NTSZ", "displayName": "Euro Efficient Core (WT)" },
+                    { "name": "MIL:WS5X", "displayName": "Euro Stoxx 50 (WT)" },
+                    { "name": "MIL:STHE", "displayName": "US Short High Yield" },
+                    { "name": "MIL:PJS1", "displayName": "Euro Short Maturity" },
+                    { "name": "MIL:SWDA", "displayName": "World Acc (Core)" }
                   ]
                 }
-                </script>
-            </div>
+              ],
+              "showSymbolLogo": true,
+              "colorTheme": "light",
+              "isTransparent": false,
+              "locale": "it"
+            }
+            </script>
+        </div>
+        
+        <div style="margin-top: 20px; border-top: 1px solid var(--border); padding-top: 15px;">
+            <div class="label">Note Operative Momento</div>
+            <p style="font-size: 13px; color: #475569; line-height: 1.6;">
+                I titoli sopra indicati sono stati estratti dal file <b>Nuovo Portafoglio</b>. <br>
+                <b>Certezza del Momento:</b> In questa vista, la colonna "Recensione" di TradingView agisce come primo filtro. 
+                Se vedi "Forte Acquisto", il momento tecnico è confermato.
+            </p>
         </div>
     </div>
 </div>
