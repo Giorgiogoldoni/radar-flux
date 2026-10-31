@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RADAR-FLUX v12.0 | RAPTOR TERMINAL</title>
+<style>
+:root{--buy1:#3b82f6;--buy2:#10b981;--buy3:#059669;--sell:#ef4444;--watch:#f59e0b;--rng:#94a3b8;--bg:#ffffff;--text:#1a202c}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:'Segoe UI',sans-serif;margin:0;padding:20px;line-height:1.4}
+.container{max-width:1200px;margin:0 auto}
+.header{border-bottom:3px solid #1e40af;padding-bottom:10px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}
+.timestamp-bar{background:#1e40af;color:#fff;padding:5px 15px;border-radius:4px;font-family:monospace;font-size:12px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:6px;margin-bottom:10px}
+.warn{background:#fef2f2;border:1px solid #ef4444;color:#991b1b;padding:8px 12px;border-radius:4px;font-size:12px;margin-bottom:10px;display:none}
+.note{background:#fffbeb;border:1px solid #f59e0b;color:#78350f;padding:8px 12px;border-radius:4px;font-size:12px;margin-bottom:10px}
+.toolbar{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+button,.btn{background:#1e40af;color:#fff;border:0;border-radius:4px;padding:7px 14px;font-size:12px;font-weight:600;cursor:pointer;text-decoration:none;display:inline-block}
+button.sec,.btn.sec{background:#fff;color:#1e40af;border:1px solid #1e40af}
+.tw{overflow-x:auto;margin-bottom:20px;box-shadow:0 4px 6px -1px rgba(0,0,0,.1);border-radius:8px}
+table{width:100%;border-collapse:collapse}
+th{background:#f1f5f9;color:#1e40af;text-align:left;padding:10px;font-size:10px;text-transform:uppercase;letter-spacing:1px;border-bottom:2px solid #1e40af;white-space:nowrap}
+td{padding:10px;border-bottom:1px solid #e2e8f0;font-size:12px;white-space:nowrap}
+tr.row{cursor:pointer} tr.row:hover td{background:#f8fafc}
+td.num,th.num{text-align:right}
+.badge{padding:3px 6px;border-radius:4px;font-weight:800;font-size:10px;color:#fff;display:inline-block;text-align:center;min-width:70px}
+.s-BUY1{background:var(--buy1)}.s-BUY2{background:var(--buy2)}.s-BUY3{background:var(--buy3)}.s-SELL{background:var(--sell)}.s-WATCH{background:var(--watch)}.s-RANGING{background:var(--rng)}
+.ticker{font-weight:800;color:#000;font-size:14px;font-family:monospace}
+.section-title td{background:#f8fafc;font-weight:bold;color:#64748b;font-size:10px;text-align:center;text-transform:uppercase;padding:5px}
+.pos{color:#059669}.neg{color:#dc2626}.mut{color:#94a3b8}
+.modal{position:fixed;inset:0;background:rgba(15,23,42,.55);display:none;align-items:flex-start;justify-content:center;overflow:auto;padding:20px;z-index:10}
+.modal.on{display:flex}
+.mbox{background:#fff;border-radius:8px;max-width:960px;width:100%;padding:18px;box-shadow:0 10px 30px rgba(0,0,0,.3)}
+.mhead{display:flex;justify-content:space-between;align-items:flex-start;gap:10px;flex-wrap:wrap;border-bottom:2px solid #1e40af;padding-bottom:8px;margin-bottom:10px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;margin-bottom:10px}
+.stat{background:#f8fafc;border:1px solid #e2e8f0;border-radius:6px;padding:8px;font-size:11px}
+.stat b{display:block;font-size:14px;margin-top:2px}
+.small{font-size:11px;color:#64748b}
+svg{width:100%;height:auto;display:block}
+.hist{max-height:240px;overflow:auto;margin-top:10px}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <div>
+      <h1 style="margin:0;font-size:24px">RADAR-FLUX <span>v12.0</span></h1>
+      <p style="margin:2px 0 0 0;color:#64748b;font-size:11px">Protocollo Decisionale 15 Asset | 10.000€ Management</p>
+    </div>
+    <div class="toolbar" style="margin:0">
+      <button id="bXls">⬇ Excel</button>
+      <button id="bPdf" class="sec">📄 Regole (PDF)</button>
+    </div>
+  </div>
+
+  <div class="timestamp-bar">
+    <span id="tsData">DATI SCANNERV2 AL: …</span>
+    <span id="tsLoad">PAGINA CARICATA: …</span>
+    <span>FONTE: scannerv2 (formato dati ridotto)</span>
+  </div>
+  <div class="warn" id="warn"></div>
+  <div class="note"><b>Dati ridotti:</b> da scannerv2 arrivano solo chiusura, KAMA, AO, RSI e segnale giornaliero. Heikin Ashi, SAR, ADX, ER, Hurst e momentum non sono disponibili e non vengono mostrati.</div>
+
+  <div class="tw"><table>
+    <thead><tr>
+      <th>ETF / Ticker</th><th>Segnale</th><th>Dal</th><th class="num">Barre</th>
+      <th class="num">Chiusura</th><th class="num">Var %</th><th class="num">Prezzo vs KAMA</th>
+      <th class="num">AO</th><th class="num">RSI</th><th>Ultimo dato</th>
+    </tr></thead>
+    <tbody id="tb"><tr><td colspan="10" class="mut">Caricamento dati da scannerv2…</td></tr></tbody>
+  </table></div>
+  <p class="small">Clic su una riga per aprire il grafico. Il vocabolario dei segnali è quello del file scannerv2 (BUY1/2/3, WATCH, RANGING, SELL), senza conversioni.</p>
+</div>
+
+<div class="modal" id="modal"><div class="mbox" id="mbox"></div></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script>
+const BASE = 'https://giorgiogoldoni.github.io/scannerv2/data/charts/';
+const SUFFIX = [{s:'MI', tv:'MIL'}, {s:'DE', tv:'XETR'}];
+const GROUPS = ['Motori Momentum & Efficient Core (WisdomTree)', 'Bond & Reddito (PIMCO / WT)'];
+const ASSETS = [
+  {g:0,t:'WNAS',n:'Nasdaq-100'},{g:0,t:'NTSZ',n:'Euro Efficient'},{g:0,t:'NTSG',n:'Global Efficient'},
+  {g:0,t:'NTSX',n:'US Efficient'},{g:0,t:'WSPX',n:'S&P 500'},{g:0,t:'WSPE',n:'S&P 500 Hedged'},
+  {g:0,t:'WWRD',n:'World Core'},{g:0,t:'WRTY',n:'Russell 2000'},
+  {g:1,t:'EUHA',n:'Euro HY Acc'},{g:1,t:'EUHI',n:'Euro HY Dist'},{g:1,t:'STHE',n:'US HY Hedged Acc'},
+  {g:1,t:'STHY',n:'US HY Dist'},{g:1,t:'PJS1',n:'Euro Short Mat'},{g:1,t:'WS5X',n:'Euro Stoxx 50'},
+  {g:1,t:'EMLI',n:'EM Local Bond'}
+];
+// Fonte unica delle regole: usata dal bottone "Regole (PDF)"
+const RULES = [
+  {h:'🔵 BUY1 (Early)', t:'Prezzo > KAMA | ER > 0.4 | AO in miglioramento. Size: 30-40%. Time Stop: 7gg.'},
+  {h:'🟢 BUY2 (Confirm)', t:'AO > 0 | Score ≥ 65 | ER ≥ 0.5. Size: 70%. Target: +5% fisso.'},
+  {h:'🟢★ BUY3 (Full)', t:'Score ≥ 80 | ER > 0.6 | Trendycator VERDE. Size: 100% (Trailing).'}
+];
+const RULES_NOTE = [
+  'Le soglie sopra (ER, Score, Trendycator) sono il protocollo operativo originale. Nei dati scannerv2 attualmente letti da questa pagina NON sono presenti ER, Score né Trendycator: la pagina non può verificarle.',
+  'I segnali mostrati (BUY1/2/3, WATCH, RANGING, SELL) sono quelli calcolati dal motore scannerv2, senza conversioni. La loro logica è definita in scannerv2, non in questa pagina.',
+  'Colonne calcolate dalla pagina: Var % = chiusura / chiusura precedente; Prezzo vs KAMA = (chiusura − KAMA) / KAMA; Dal / Barre = inizio e durata (in barre giornaliere) del segnale corrente.',
+  'Grafico: chiusura, KAMA, frecce al cambio segnale, pannelli AO e RSI. Dati ridotti: niente Heikin Ashi, SAR, ADX, Hurst.'
+];
+
+const fmt = (x,d=2) => (x==null||isNaN(x)) ? '–' : Number(x).toLocaleString('it-IT',{minimumFractionDigits:d,maximumFractionDigits:d});
+const fdate = s => s ? s.split('-').reverse().join('/') : '–';
+let DATA = [];
+
+async function loadOne(a){
+  for(const sf of SUFFIX){
+    try{
+      const r = await fetch(`${BASE}${a.t}_${sf.s}.json?_=${Date.now()}`, {cache:'no-store'});
+      if(!r.ok) continue;
+      const d = await r.json();
+      const n = d.dates && d.dates.length;
+      if(!n || !d.closes || d.closes.length!==n || !d.signals || d.signals.length!==n) continue;
+      return {...a, sf, d, sm: summarize(d)};
+    }catch(e){}
+  }
+  return {...a, err:true};
+}
+function summarize(d){
+  const i = d.dates.length-1, sig = d.signals[i];
+  let j = i; while(j>0 && d.signals[j-1]===sig) j--;
+  const c = d.closes[i], p = i>0 ? d.closes[i-1] : null, k = d.kama ? d.kama[i] : null;
+  return {last:d.dates[i], close:c, chg: p? (c/p-1)*100 : null, kama:k, kpct: k? (c-k)/k*100 : null,
+          ao: d.ao? d.ao[i]:null, rsi: d.rsi? d.rsi[i]:null, sig, since:d.dates[j], bars:i-j+1};
+}
+function runs(d){
+  const out=[]; let s=0;
+  for(let i=1;i<=d.dates.length;i++){
+    if(i===d.dates.length || d.signals[i]!==d.signals[s]){
+      const p0=d.closes[s], p1=d.closes[i-1];
+      out.push({sig:d.signals[s], from:d.dates[s], to:d.dates[i-1], bars:i-s, p0, p1, ret:(p1/p0-1)*100});
+      s=i;
+    }
+  }
+  return out;
+}
+const cls = v => v==null ? 'mut' : (v>=0 ? 'pos' : 'neg');
+const badge = s => `<span class="badge s-${s}">${s}</span>`;
+
+function render(){
+  let h='', g=-1;
+  DATA.forEach((a,idx)=>{
+    if(a.g!==g){ g=a.g; h+=`<tr class="section-title"><td colspan="10">${GROUPS[g]}</td></tr>`; }
+    const name = `<span class="ticker">${a.t}</span> (${a.n})`;
+    if(a.err){ h+=`<tr><td>${name}</td><td colspan="9" class="mut">Non disponibile in scannerv2 (provati _MI e _DE)</td></tr>`; return; }
+    const m=a.sm;
+    h+=`<tr class="row" data-i="${idx}"><td>${name}</td><td>${badge(m.sig)}</td><td>${fdate(m.since)}</td><td class="num">${m.bars}</td>
+      <td class="num">${fmt(m.close)}</td><td class="num ${cls(m.chg)}">${fmt(m.chg)}%</td>
+      <td class="num ${cls(m.kpct)}">${fmt(m.kpct)}%</td><td class="num ${cls(m.ao)}">${fmt(m.ao)}</td>
+      <td class="num">${fmt(m.rsi,1)}</td><td>${fdate(m.last)}</td></tr>`;
+  });
+  document.getElementById('tb').innerHTML = h;
+  document.querySelectorAll('tr.row').forEach(r=>r.onclick=()=>openChart(DATA[+r.dataset.i]));
+
+  const ok = DATA.filter(a=>!a.err);
+  const now = new Date();
+  document.getElementById('tsLoad').textContent = 'PAGINA CARICATA: ' + now.toLocaleDateString('it-IT') + ' ' + now.toLocaleTimeString('it-IT') + ' (ora locale)';
+  const w = document.getElementById('warn'); const msgs=[];
+  if(ok.length){
+    const lasts = ok.map(a=>a.sm.last).sort(); const newest = lasts[lasts.length-1], oldest = lasts[0];
+    document.getElementById('tsData').textContent = 'DATI SCANNERV2 AL: ' + fdate(newest) + (oldest!==newest ? ' (il più vecchio: '+fdate(oldest)+')' : '');
+    const days = Math.floor((now - new Date(newest+'T00:00:00'))/864e5);
+    if(days>4) msgs.push(`Dati vecchi di ${days} giorni (ultimo dato ${fdate(newest)}): non usare i segnali come operativi.`);
+  } else {
+    document.getElementById('tsData').textContent = 'DATI SCANNERV2: non disponibili';
+    msgs.push('Nessun dato letto da scannerv2: controllare connessione o nomi file.');
+  }
+  const miss = DATA.filter(a=>a.err).map(a=>a.t);
+  if(miss.length) msgs.push(`Ticker non trovati in scannerv2: ${miss.join(', ')}.`);
+  if(msgs.length){ w.style.display='block'; w.innerHTML = msgs.map(x=>'⚠ '+x).join('<br>'); }
+}
+
+/* ---------- Grafico ---------- */
+function chartSVG(d){
+  const n=d.dates.length, W=900, L=46, R=10, pw=W-L-R;
+  const X = i => L + (n>1 ? i*pw/(n-1) : pw/2);
+  const col = {BUY1:'#3b82f6',BUY2:'#10b981',BUY3:'#059669',SELL:'#ef4444',WATCH:'#f59e0b'};
+  const H1=290,H2=90,H3=90, gap=24, T=10;
+  const y1o=T, y2o=T+H1+gap, y3o=y2o+H2+gap, Htot=y3o+H3+22;
+  const px=[...d.closes,...(d.kama||[])].filter(v=>v!=null);
+  let mn=Math.min(...px), mx=Math.max(...px); const pad=(mx-mn)*0.06||1; mn-=pad; mx+=pad;
+  const Y1=v=>y1o+H1-(v-mn)/(mx-mn)*H1;
+  let s=`<svg viewBox="0 0 ${W} ${Htot}" xmlns="http://www.w3.org/2000/svg" font-family="Segoe UI,sans-serif" font-size="10">`;
+  // griglia prezzo
+  for(let k=0;k<=4;k++){ const v=mn+(mx-mn)*k/4, y=Y1(v);
+    s+=`<line x1="${L}" x2="${W-R}" y1="${y}" y2="${y}" stroke="#e2e8f0"/><text x="${L-4}" y="${y+3}" text-anchor="end" fill="#64748b">${fmt(v)}</text>`; }
+  const path = arr => arr.map((v,i)=>v==null?'':(`${X(i).toFixed(1)},${Y1(v).toFixed(1)}`)).filter(Boolean).join(' ');
+  if(d.kama) s+=`<polyline points="${path(d.kama)}" fill="none" stroke="#f59e0b" stroke-width="1.6"/>`;
+  s+=`<polyline points="${path(d.closes)}" fill="none" stroke="#1e40af" stroke-width="1.6"/>`;
+  // marcatori al cambio segnale
+  for(let i=0;i<n;i++){
+    if(i>0 && d.signals[i]===d.signals[i-1]) continue;
+    const sg=d.signals[i], x=X(i), y=Y1(d.closes[i]);
+    if(sg.startsWith('BUY')) s+=`<path d="M${x},${y+4} l-5,9 h10 z" fill="${col[sg]}"><title>${sg} ${fdate(d.dates[i])}</title></path>`;
+    else if(sg==='SELL') s+=`<path d="M${x},${y-4} l-5,-9 h10 z" fill="${col.SELL}"><title>SELL ${fdate(d.dates[i])}</title></path>`;
+    else if(sg==='WATCH') s+=`<circle cx="${x}" cy="${y-8}" r="3" fill="${col.WATCH}"><title>WATCH ${fdate(d.dates[i])}</title></circle>`;
+  }
+  s+=`<text x="${L}" y="${y1o+10}" fill="#1e40af" font-weight="700">Chiusura</text><text x="${L+55}" y="${y1o+10}" fill="#f59e0b" font-weight="700">KAMA</text>`;
+  // AO
+  if(d.ao){
+    const am=Math.max(...d.ao.map(Math.abs))||1, Y2=v=>y2o+H2/2-(v/am)*(H2/2), bw=Math.max(1,pw/n*0.7);
+    s+=`<rect x="${L}" y="${y2o}" width="${pw}" height="${H2}" fill="none" stroke="#e2e8f0"/><line x1="${L}" x2="${W-R}" y1="${Y2(0)}" y2="${Y2(0)}" stroke="#94a3b8"/>`;
+    d.ao.forEach((v,i)=>{ if(v==null)return; const y=Y2(v), y0=Y2(0);
+      s+=`<rect x="${(X(i)-bw/2).toFixed(1)}" y="${Math.min(y,y0).toFixed(1)}" width="${bw.toFixed(1)}" height="${Math.abs(y-y0).toFixed(1)}" fill="${v>=0?'#10b981':'#ef4444'}"/>`; });
+    s+=`<text x="${L+4}" y="${y2o+11}" fill="#64748b" font-weight="700">AO</text>`;
+  }
+  // RSI
+  if(d.rsi){
+    const Y3=v=>y3o+H3-(v/100)*H3;
+    s+=`<rect x="${L}" y="${y3o}" width="${pw}" height="${H3}" fill="none" stroke="#e2e8f0"/>`;
+    [30,70].forEach(v=>s+=`<line x1="${L}" x2="${W-R}" y1="${Y3(v)}" y2="${Y3(v)}" stroke="#cbd5e1" stroke-dasharray="4 3"/><text x="${L-4}" y="${Y3(v)+3}" text-anchor="end" fill="#64748b">${v}</text>`);
+    s+=`<polyline points="${d.rsi.map((v,i)=>v==null?'':`${X(i).toFixed(1)},${Y3(v).toFixed(1)}`).filter(Boolean).join(' ')}" fill="none" stroke="#7c3aed" stroke-width="1.4"/><text x="${L+4}" y="${y3o+11}" fill="#7c3aed" font-weight="700">RSI</text>`;
+  }
+  // asse date
+  for(let k=0;k<=5;k++){ const i=Math.round(k*(n-1)/5);
+    s+=`<text x="${X(i)}" y="${Htot-6}" text-anchor="middle" fill="#64748b">${fdate(d.dates[i])}</text>`; }
+  // tooltip nativo per barra
+  const bw2=pw/n;
+  for(let i=0;i<n;i++){
+    s+=`<rect x="${(X(i)-bw2/2).toFixed(1)}" y="${y1o}" width="${bw2.toFixed(1)}" height="${Htot-y1o-18}" fill="transparent"><title>${fdate(d.dates[i])} | chiusura ${fmt(d.closes[i])} | KAMA ${d.kama?fmt(d.kama[i]):'–'} | AO ${d.ao?fmt(d.ao[i]):'–'} | RSI ${d.rsi?fmt(d.rsi[i],1):'–'} | ${d.signals[i]}</title></rect>`;
+  }
+  return s+'</svg>';
+}
+function openChart(a){
+  const m=a.sm, d=a.d, rs=runs(d).slice().reverse();
+  const tvUrl=`https://www.tradingview.com/chart/?symbol=${encodeURIComponent(a.sf.tv+':'+a.t)}`;
+  const hist = rs.map(r=>`<tr><td>${badge(r.sig)}</td><td>${fdate(r.from)}</td><td>${fdate(r.to)}</td><td class="num">${r.bars}</td><td class="num">${fmt(r.p0)}</td><td class="num">${fmt(r.p1)}</td><td class="num ${cls(r.ret)}">${fmt(r.ret)}%</td></tr>`).join('');
+  document.getElementById('mbox').innerHTML = `
+  <div class="mhead">
+    <div><span class="ticker" style="font-size:20px">${a.t}</span> <span class="small">${a.n} · ${a.t}.${a.sf.s}</span><br>
+      <span class="small">Grafico: dati giornalieri dal ${fdate(d.dates[0])} al <b>${fdate(m.last)}</b> (${d.dates.length} barre) · fonte scannerv2</span></div>
+    <div style="text-align:right">${badge(m.sig)} <b style="font-size:18px">${fmt(m.close)}</b> <span class="${cls(m.chg)}">${fmt(m.chg)}%</span></div>
+  </div>
+  <div class="stats">
+    <div class="stat">KAMA<b>${fmt(m.kama)}</b></div>
+    <div class="stat">Prezzo vs KAMA<b class="${cls(m.kpct)}">${fmt(m.kpct)}%</b></div>
+    <div class="stat">AO<b class="${cls(m.ao)}">${fmt(m.ao)}</b></div>
+    <div class="stat">RSI<b>${fmt(m.rsi,1)}</b></div>
+    <div class="stat">Segnale dal<b>${fdate(m.since)}</b></div>
+    <div class="stat">Barre nel segnale<b>${m.bars}</b></div>
+  </div>
+  <p class="small" style="margin:0 0 6px 0">Dati ridotti: non disponibili Heikin Ashi, SAR, ADX, ER, Hurst, momentum. Frecce = cambio segnale (▲ BUY, ▼ SELL, ● WATCH).</p>
+  ${chartSVG(d)}
+  <h4 style="margin:12px 0 4px 0;color:#1e40af">Storia segnali</h4>
+  <div class="hist"><table><thead><tr><th>Segnale</th><th>Dal</th><th>Al</th><th class="num">Barre</th><th class="num">Prezzo inizio</th><th class="num">Prezzo fine</th><th class="num">Var %</th></tr></thead><tbody>${hist}</tbody></table></div>
+  <div class="toolbar" style="margin-top:12px">
+    <a class="btn" href="${tvUrl}" target="_blank" rel="noopener">TradingView (${a.sf.tv}:${a.t})</a>
+    <button class="sec" id="mXls">⬇ Excel serie</button>
+    <button class="sec" onclick="closeModal()">Chiudi</button>
+  </div>`;
+  document.getElementById('mXls').onclick=()=>xlsSerie(a);
+  document.getElementById('modal').classList.add('on');
+}
+function closeModal(){ document.getElementById('modal').classList.remove('on'); }
+document.getElementById('modal').addEventListener('click',e=>{ if(e.target.id==='modal') closeModal(); });
+document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeModal(); });
+
+/* ---------- Excel ---------- */
+const today = () => new Date().toISOString().slice(0,10);
+function save(wb, name, fallbackRows){
+  if(window.XLSX){ XLSX.writeFile(wb, name+'.xlsx'); return; }
+  const csv='\ufeff'+fallbackRows.map(r=>r.map(c=>`"${String(c==null?'':c).replace(/"/g,'""')}"`).join(';')).join('\n');
+  const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'})); a.download=name+'.csv'; a.click();
+}
+function xlsAll(){
+  const ok=DATA.filter(a=>!a.err);
+  if(!ok.length){ alert('Nessun dato da esportare.'); return; }
+  const r1=[['Ticker','Nome','Borsa','Segnale','Dal','Barre','Ultimo dato','Chiusura','Var %','KAMA','Prezzo vs KAMA %','AO','RSI']];
+  const r2=[['Ticker','Segnale','Dal','Al','Barre','Prezzo inizio','Prezzo fine','Var %']];
+  DATA.forEach(a=>{
+    if(a.err){ r1.push([a.t,a.n,'non disponibile']); return; }
+    const m=a.sm;
+    r1.push([a.t,a.n,a.sf.s,m.sig,m.since,m.bars,m.last,m.close,m.chg,m.kama,m.kpct,m.ao,m.rsi]);
+    runs(a.d).forEach(r=>r2.push([a.t,r.sig,r.from,r.to,r.bars,r.p0,r.p1,r.ret]));
+  });
+  let wb=null;
+  if(window.XLSX){ wb=XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(r1),'Riepilogo');
+    XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(r2),'Storia segnali'); }
+  save(wb,'radar-flux_'+today(),r1);
+}
+function xlsSerie(a){
+  const d=a.d, rows=[['Data','Chiusura','KAMA','AO','RSI','Segnale']];
+  d.dates.forEach((x,i)=>rows.push([x,d.closes[i],d.kama?d.kama[i]:null,d.ao?d.ao[i]:null,d.rsi?d.rsi[i]:null,d.signals[i]]));
+  let wb=null; if(window.XLSX){ wb=XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(rows),a.t); }
+  save(wb,`radar-flux_${a.t}_${today()}`,rows);
+}
+document.getElementById('bXls').onclick=xlsAll;
+
+/* ---------- Regole PDF (finestra di stampa → Salva come PDF) ---------- */
+document.getElementById('bPdf').onclick=()=>{
+  const w=window.open('','_blank');
+  if(!w){ alert('Popup bloccato: consenti i popup per questa pagina.'); return; }
+  const now=new Date().toLocaleString('it-IT');
+  w.document.write(`<!DOCTYPE html><html lang="it"><head><meta charset="UTF-8"><title>RADAR-FLUX regole</title>
+  <style>body{font-family:Segoe UI,sans-serif;background:#fff;color:#1a202c;padding:24px;max-width:800px;margin:auto}h1{color:#1e40af;font-size:20px;margin:0}
+  h3{color:#1e40af;border-bottom:1px solid #ddd;padding-bottom:3px;margin-top:20px}p,li{font-size:13px;line-height:1.5}.s{color:#64748b;font-size:11px}</style></head><body>
+  <h1>RADAR-FLUX — Protocollo operativo RAPTOR</h1><div class="s">Generato dalla pagina il ${now}</div>
+  <h3>Regole di ingresso</h3>${RULES.map(r=>`<p><b>${r.h}</b><br>${r.t}</p>`).join('')}
+  <h3>Note e limiti dei dati</h3><ul>${RULES_NOTE.map(x=>`<li>${x}</li>`).join('')}</ul>
+  <h3>Universo (${ASSETS.length} asset)</h3><p>${ASSETS.map(a=>a.t+' ('+a.n+')').join(', ')}</p>
+  </body></html>`);
+  w.document.close(); w.focus(); setTimeout(()=>w.print(),400);
+};
+
+/* ---------- Avvio ---------- */
+(async()=>{ DATA = await Promise.all(ASSETS.map(loadOne)); render(); })();
+</script>
+</body>
+</html>
